@@ -145,6 +145,6 @@ std::ostream& operator<<(std::ostream& out, const DLList& list) {
         out << curr -> value << ", ";
     }
     
-    out << "]\n\n";
+    out << "]\n";
     return out;
 }
