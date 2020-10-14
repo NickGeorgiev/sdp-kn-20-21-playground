@@ -23,9 +23,9 @@ class DLList {
 
 public:
     DLList();
-    DLList(const size_t&, Node*, Node*);
     DLList(const DLList&);
     DLList(DLList&&);
+    DLList(const std::initializer_list<int>&);
     ~DLList();
 
     void push_front(const int&);
@@ -34,6 +34,7 @@ public:
     void pop_back();
 
     DLList& operator=(const DLList&);
+    DLList& operator=(DLList&&);
     DLList operator+(const int&) const;
     DLList& operator+=(const int&);
 
