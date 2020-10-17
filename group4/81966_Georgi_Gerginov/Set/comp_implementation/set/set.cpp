@@ -131,7 +131,7 @@ void Set::push(Comparable* new_data) {
 
 std::ostream& operator<<(std::ostream& out, const Set& _set) {
     Set::Node* curr{_set.m_start};
-	std::cout << "$ ";
+	out << "$ ";
 
     while(curr) {
         out << "[" << curr -> data -> get_data() << "]";

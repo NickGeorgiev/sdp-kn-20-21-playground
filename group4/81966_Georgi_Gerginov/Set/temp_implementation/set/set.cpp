@@ -181,7 +181,7 @@ void Set<T>::push(const T& new_data) {
 template <class T>
 std::ostream& operator<<(std::ostream& out, const Set<T>& _set) {
 	typename Set<T>::Node* curr{_set.m_start};
-	std::cout << "$ ";
+	out << "$ ";
 
     while(curr) {
         out << "[" << curr -> data << "]";
