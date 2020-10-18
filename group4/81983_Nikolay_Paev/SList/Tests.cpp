@@ -93,6 +93,23 @@ TEST_CASE("Copy constructor") {
 
 }
 
+TEST_CASE("Assignment operator") {
+    SList<int> first;
+    SList<int> second;
+
+    for(int i = 1 ; i <= 10 ; ++i) {
+        first.push(i);
+    }
+
+    second = first;
+
+    first.clear();
+
+    for(int i = 1 ; i <= 10 ; ++i) {
+        CHECK(second.isMember(i));
+    }
+}
+
 TEST_CASE("Empty and clear") {
     SList<int> list;
     CHECK(list.empty());
