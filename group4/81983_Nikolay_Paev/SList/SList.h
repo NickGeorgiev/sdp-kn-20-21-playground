@@ -32,7 +32,8 @@ class SList {
     SList& removeElement(const T& elem);
 
     bool isMember(const T& elem) const;
-    bool empty() const;  
+    bool empty() const; 
+    size_t length() const; 
 
     void print() const;  
 

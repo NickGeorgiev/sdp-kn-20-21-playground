@@ -122,6 +122,23 @@ TEST_CASE("Empty and clear") {
     CHECK(list.empty());
 }
 
+TEST_CASE("Size") {
+    SList<int> list;
+    CHECK(list.length() == 0);
+
+    list.push(1);
+    list.push(2);
+    list.push(3);
+
+    CHECK(list.length() == 3);
+
+    list.removeElement(2);
+    CHECK(list.length() == 2);
+
+    list.clear();
+    CHECK(list.length() == 0);
+}
+
 int main() {
     doctest::Context().run();
 }

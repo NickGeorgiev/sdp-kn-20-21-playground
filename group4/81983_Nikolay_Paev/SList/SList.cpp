@@ -73,6 +73,7 @@ void SList<T>::clear() {
         first = first->next;
         delete temp;
     }
+    size = 0;
 }
 
 template<class T>
@@ -133,7 +134,9 @@ SList<T>& SList<T>::removeElement(const T& elem) {
             if(first->data == elem) {
                 Node* temp = first;
                 first = first->next;
-                delete temp;  
+                delete temp;
+
+                --size;
             }
         }
         else {
@@ -142,6 +145,7 @@ SList<T>& SList<T>::removeElement(const T& elem) {
                     Node* current = prev->next;
                     prev->next = current->next;
                     delete current;
+                    --size;
                 }
             }
         }
@@ -171,6 +175,11 @@ bool SList<T>::isMember(const T& elem) const {
 template<class T>
 bool SList<T>::empty() const {
     return !first;
+}
+
+template<class T>
+size_t SList<T>::length() const {
+    return size;
 }
 
 template<class T>
