@@ -86,6 +86,10 @@ void SkipList::insertAt (const int &_data, Node *_prevNode) {
         addToStart(_data);
         return;
     }
+    if(_prevNode == last) {
+        addToEnd(_data);
+        return;
+    }
     Node *newNode = new Node(_data, _prevNode->next, nullptr);
     _prevNode->next = newNode;
     size++;
