@@ -1,4 +1,5 @@
-#include "doctest.h"
+// #include "doctest.h"
+#include "shared/specs/specHelper.h"
 #include "SkipList.h"
 
 TEST_CASE ("Constructors")
