@@ -115,3 +115,15 @@ slist &slist::operator+=(const int &data)
     pushSorted(data);
     return *this;
 }
+
+std::ostream &operator<<(std::ostream &out, const slist &list)
+{
+
+    typename slist::skipBox *current = list.first;
+    while (current != nullptr)
+    {
+        out << current->data << " ";
+        current = current->next;
+    }
+    return out;
+}
