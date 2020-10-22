@@ -1,7 +1,7 @@
 #include "SkipList.h"
 
 
-int main()//////
+int main()
 {
     SkipList l, l1;
 
