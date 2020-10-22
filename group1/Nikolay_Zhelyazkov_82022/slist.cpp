@@ -80,3 +80,38 @@ bool slist::member(const int &_data) const
     }
     return crr != nullptr;
 }
+
+typename slist::skipBox *slist::locate(const int &data) const
+{
+    if (first == nullptr || !c(first->data, data))
+    {
+        return nullptr;
+    }
+    slist::skipBox *crr = first;
+    while (crr->next != nullptr && c(crr->next->data, data))
+    {
+        crr = crr->next;
+    }
+    return crr;
+}
+void slist::pushSorted(const int &data)
+{
+
+    count++;
+
+    slist::skipBox *el = locate(data);
+
+    if (el == nullptr)
+    {
+        first = new slist::skipBox(data, first, nullptr);
+        return;
+    }
+
+    el->next = new slist::skipBox(data, el->next, nullptr);
+}
+
+slist &slist::operator+=(const int &data)
+{
+    pushSorted(data);
+    return *this;
+}
