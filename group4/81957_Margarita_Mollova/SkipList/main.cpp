@@ -1,13 +1,13 @@
-#define DOCTEST_CONFIG_IMPLEMENT
+// #define DOCTEST_CONFIG_IMPLEMENT
 
-#include <iostream>
+// #include <iostream>
 
-#include "SkipList.h"
-#include "tests.h"
+// #include "SkipList.h"
+// #include "tests.h"
 
 int main ()
 {
-    doctest::Context().run();
+    // doctest::Context().run();
 
     // SkipList skipL;
     // skipL.addElement(5);
