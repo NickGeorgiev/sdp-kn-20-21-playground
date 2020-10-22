@@ -1,5 +1,4 @@
 #include "slist.h"
-
 #include "specHelper.h"
 bool comp(const int &a, const int &b)
 {
