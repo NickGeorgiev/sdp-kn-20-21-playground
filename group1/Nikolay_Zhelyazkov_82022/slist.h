@@ -31,7 +31,7 @@ public:
     ~slist();
     bool member(const int &) const;
     size_t size() const;
-    void skipping();
+    void optimise();
     void pushSorted(const int&);
     slist& operator=(const slist&);
     slist& operator+=(const int&);

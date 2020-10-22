@@ -127,3 +127,20 @@ std::ostream &operator<<(std::ostream &out, const slist &list)
     }
     return out;
 }
+void slist::optimise()
+{
+    slist::skipBox *crr = first, *lastCrr = first;
+    size_t br = 0;
+
+    while (crr != nullptr)
+    {
+        crr = crr->next;
+        ++br;
+        if (br >= sqrt(size()))
+        {
+            lastCrr->skip = crr;
+            lastCrr = crr;
+            br = 0;
+        }
+    }
+}
