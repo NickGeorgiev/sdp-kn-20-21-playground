@@ -45,7 +45,9 @@ void slist::clear()
         delete save;
     }
 }
-
+slist::skipBox::skipBox(const int &data, skipBox *next, skipBox *skip) : data(data), next(next), skip(skip)
+{
+}
 slist &slist::operator=(const slist &other)
 {
     if (this != &other)
@@ -54,4 +56,9 @@ slist &slist::operator=(const slist &other)
         copy(other);
     }
     return *this;
+}
+
+size_t slist::size() const
+{
+    return count;
 }
