@@ -108,6 +108,7 @@ void slist::pushSorted(const int &data)
     }
 
     el->next = new slist::skipBox(data, el->next, nullptr);
+    optimise();
 }
 
 slist &slist::operator+=(const int &data)
