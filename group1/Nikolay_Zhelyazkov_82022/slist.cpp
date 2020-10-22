@@ -62,3 +62,21 @@ size_t slist::size() const
 {
     return count;
 }
+
+bool slist::member(const int &_data) const
+{
+    if (first == nullptr)
+    {
+        return false;
+    }
+    slist::skipBox *crr = first;
+    while (crr->skip != nullptr && c(crr->skip->data, _data))
+    {
+        crr = crr->skip;
+    }
+    while (crr != nullptr && crr->data != _data)
+    {
+        crr = crr->next;
+    }
+    return crr != nullptr;
+}
