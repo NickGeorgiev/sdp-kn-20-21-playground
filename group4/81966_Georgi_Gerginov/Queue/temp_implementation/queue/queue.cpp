@@ -28,9 +28,10 @@ public:
 	void push(const T&);
 	void pop();
 
-	const size_t get_length() const;
-	const T& first_data() const;
+	const size_t length() const;
 	bool empty() const;
+	const T& front() const;
+	const T& back() const;
 
 	template <class U>
 	friend std::ostream& operator<<(std::ostream&, const Queue<U>&);
@@ -99,7 +100,7 @@ void Queue<T>::pop() {
 }
 
 template <class T>
-const size_t Queue<T>::get_length() const {
+const size_t Queue<T>::length() const {
 	return m_length;
 }
 
@@ -109,8 +110,13 @@ bool Queue<T>::empty() const {
 }
 
 template <class T>
-const T& Queue<T>::first_data() const {
+const T& Queue<T>::front() const {
 	return m_start -> data;
+}
+
+template <class T>
+const T& Queue<T>::back() const {
+	return m_end -> data;
 }
 
 template <class T>

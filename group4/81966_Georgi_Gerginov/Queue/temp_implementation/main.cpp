@@ -7,7 +7,12 @@ int main() {
 
 	test.push(5);
 	test.pop();
-	std::cout << test;
+	
+	std::cout << test << "\n";
+	std::cout << "length: " << test.length() << "\n";
+	std::cout << std::boolalpha << "empty: " << test.empty() << "\n";
+	std::cout << "front: " << test.front() << "\n";
+	std::cout << "back: " << test.back() << "\n"; 
 	
 	return 0;
 }

@@ -8,9 +8,9 @@ int main() {
 	std::vector<Worker> worker_list{{"Vanio"}, {"Gosho"}, {"Kosta"}, {"Pesho"}, {"Filip"}};
 	size_t counter{0};
 
-	if(worker_list.size() >= task_sheet.get_length()) {
+	if(worker_list.size() >= task_sheet.length()) {
 		while(!task_sheet.empty()) {
-			std::cout << "$ " << worker_list[counter] << " has to " << task_sheet.first_data() << "\n";
+			std::cout << "$ " << worker_list[counter] << " has to " << task_sheet.front() << "\n";
 			task_sheet.pop();
 			counter++;
 		}
@@ -21,7 +21,7 @@ int main() {
 		}
 	} else {
 		while(counter < worker_list.size()) {
-			std::cout << "$ " << worker_list[counter] << " has to " << task_sheet.first_data() << "\n";
+			std::cout << "$ " << worker_list[counter] << " has to " << task_sheet.front() << "\n";
 			task_sheet.pop();
 			counter++;
 		}
