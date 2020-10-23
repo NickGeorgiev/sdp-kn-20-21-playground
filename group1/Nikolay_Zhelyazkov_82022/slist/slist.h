@@ -1,5 +1,5 @@
-#ifndef _SLIST
-#define _SLIST
+#ifndef _Slist
+#define _Slist
 #include <iostream>
 using comparator = bool (*)(const int &, const int &);
 // bool isTrue = [](const int &d1, const int &d2) = >
@@ -7,7 +7,7 @@ using comparator = bool (*)(const int &, const int &);
 //     return d1 < d2;
 // }
 
-class slist
+class Slist
 {
 private:
     struct skipBox
@@ -23,19 +23,19 @@ private:
     comparator c;
     skipBox *locate(const int &) const;
     void clear();
-    void copy(const slist&);
+    void copy(const Slist&);
 
 public:
-    slist(comparator);
-    slist(const slist&);
-    ~slist();
+    Slist(comparator);
+    Slist(const Slist&);
+    ~Slist();
     bool member(const int &) const;
     size_t size() const;
     void optimise();
     void pushSorted(const int&);
-    slist& operator=(const slist&);
-    slist& operator+=(const int&);
-    friend std::ostream& operator<<(std::ostream&, const slist&);
+    Slist& operator=(const Slist&);
+    Slist& operator+=(const int&);
+    friend std::ostream& operator<<(std::ostream&, const Slist&);
 };
 
 #endif
