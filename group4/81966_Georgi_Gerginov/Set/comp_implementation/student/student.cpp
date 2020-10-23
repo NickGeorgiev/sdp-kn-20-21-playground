@@ -9,9 +9,9 @@ const short int Student::compareTo(Comparable* other) const {
         return -1;
     } else if(m_facnum == pt_to_stu -> m_facnum) {
         return 0;
-    }
-
-    return 1;
+    } else {
+    	return 1;
+	}
 }
 
 const unsigned int Student::get_data() const {

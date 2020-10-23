@@ -9,9 +9,9 @@ const short int Engine::compareTo(Comparable* other) const {
         return -1;
     } else if(m_serialnum == pt_to_eng -> m_serialnum) {
         return 0;
-    }
-
-    return 1;
+    } else {
+		return 1;
+	}
 }
 
 const unsigned int Engine::get_data() const {
