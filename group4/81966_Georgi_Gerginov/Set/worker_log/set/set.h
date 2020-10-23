@@ -1,16 +1,16 @@
 #ifndef SET_H
 #define SET_H
-#include "../log/log.h"
+#include "../comparable/comparable.h"
 #include <iostream>
 
 class Set {
 
     struct Node {
-        Log data;
+        Comparable* data;
         Node* next;
         Node* prev;
 
-        Node(const Log&, Node*, Node*);
+        Node(Comparable*, Node*, Node*);
     };
 
     size_t m_length;
@@ -18,22 +18,24 @@ class Set {
     Node* m_end;
 
     void del();
-    bool is_unique(const Log&) const;
+	void copy(const Set&);
+	void swap(Set&);
 
-	void print_forward() const;
-	void print_backward() const;
-	void print_dates() const;
+    void push_front(Comparable*);
+    void push_back(Comparable*);
+    bool is_unique(Comparable*) const;
 
 public:
     Set();
-	Set(const size_t&);
-	Set(const std::initializer_list<const Log>&);
+	Set(const Set&);
+	Set(const std::initializer_list<Comparable*>&);
     ~Set();
 
-    void push_back(const Log&);
+    void pop_front();
     void pop_back();
+    void push(Comparable*);
 
-	void print_menu() const;
+	Set& operator=(const Set&);
 
     friend std::ostream& operator<<(std::ostream&, const Set&);
 };

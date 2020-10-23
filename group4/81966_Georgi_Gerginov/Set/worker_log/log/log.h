@@ -1,9 +1,10 @@
 #ifndef LOG_H
 #define LOG_H
+#include "../comparable/comparable.h"
 #include <iostream>
 #include <string>
 
-class Log {
+class Log : public Comparable {
 
     std::string m_date;
 	std::string m_time;
@@ -12,10 +13,9 @@ class Log {
 public:
     Log(const std::string&, const std::string&, const std::string&);
 
-    const std::string& get_date() const;
-	const std::string& get_time() const;
-	const std::string& get_description() const;
-
+	const short int compareTo(Comparable*) const override;
+	const std::string get_date() const override;
+	
 	bool operator==(const Log&) const;
 
 	friend std::ostream& operator<<(std::ostream&, const Log&);
