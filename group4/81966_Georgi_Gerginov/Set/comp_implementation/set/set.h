@@ -18,6 +18,8 @@ class Set {
     Node* m_end;
 
     void del();
+    void push_front(Comparable*);
+    void push_back(Comparable*);
     bool is_unique(Comparable*) const;
 
 public:
@@ -25,9 +27,7 @@ public:
 	Set(const std::initializer_list<Comparable*>&);
     ~Set();
 
-    void push_front(Comparable*);
     void pop_front();
-    void push_back(Comparable*);
     void pop_back();
     void push(Comparable*);
 

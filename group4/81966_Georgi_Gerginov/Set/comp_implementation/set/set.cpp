@@ -11,6 +11,40 @@ void Set::del() {
     delete m_start;
 }
 
+void Set::push_front(Comparable* new_data) {
+    if(is_unique(new_data)) {
+
+        m_length++;
+        m_start = new (std::nothrow) Node{new_data, m_start};
+
+        if(!m_start -> next) {
+            m_end = m_start;
+        } else {
+            m_start -> next -> prev = m_start;
+        }
+
+    } else {
+        std::cout << "$ error: element is not unique\n";
+    }
+}
+
+void Set::push_back(Comparable* new_data) {
+    if(is_unique(new_data)) {
+
+        m_length++;
+        m_end = new (std::nothrow) Node{new_data, nullptr, m_end};
+
+        if(!m_end -> prev) {
+            m_start = m_end;
+        } else {
+            m_end -> prev -> next = m_end;
+        }
+
+    } else {
+        std::cout << "$ error: element is not unique\n";
+    }
+}
+
 bool Set::is_unique(Comparable* _data) const {
     Node* curr{m_start};
 
@@ -36,23 +70,6 @@ Set::~Set() {
     del();
 }
 
-void Set::push_front(Comparable* new_data) {
-    if(is_unique(new_data)) {
-
-        m_length++;
-        m_start = new (std::nothrow) Node{new_data, m_start};
-
-        if(!m_start -> next) {
-            m_end = m_start;
-        } else {
-            m_start -> next -> prev = m_start;
-        }
-
-    } else {
-        std::cout << "$ error: element is not unique\n";
-    }
-}
-
 void Set::pop_front() {
     if(m_start) {
 
@@ -68,23 +85,6 @@ void Set::pop_front() {
         
     } else {
         std::cout << "$ error: list is empty\n";
-    }
-}
-
-void Set::push_back(Comparable* new_data) {
-    if(is_unique(new_data)) {
-
-        m_length++;
-        m_end = new (std::nothrow) Node{new_data, nullptr, m_end};
-
-        if(!m_end -> prev) {
-            m_start = m_end;
-        } else {
-            m_end -> prev -> next = m_end;
-        }
-
-    } else {
-        std::cout << "$ error: element is not unique\n";
     }
 }
 

@@ -18,6 +18,8 @@ class Set {
     Node* m_end;
 
     void del();
+    void push_front(const T&);
+    void push_back(const T&);
     bool is_unique(const T&) const;
 
 public:
@@ -25,9 +27,7 @@ public:
 	Set(const std::initializer_list<const T>&);
     ~Set();
 
-    void push_front(const T&);
     void pop_front();
-    void push_back(const T&);
     void pop_back();
     void push(const T&);
 
@@ -49,6 +49,42 @@ void Set<T>::del() {
     }
 
     delete m_start;
+}
+
+template <class T>
+void Set<T>::push_front(const T& new_data) {
+    if(is_unique(new_data)) {
+
+        m_length++;
+        m_start = new (std::nothrow) Node{new_data, m_start};
+
+        if(!m_start -> next) {
+            m_end = m_start;
+        } else {
+            m_start -> next -> prev = m_start;
+        }
+
+    } else {
+        std::cout << "$ error: element is not unique\n";
+    }
+}
+
+template <class T>
+void Set<T>::push_back(const T& new_data) {
+    if(is_unique(new_data)) {
+
+        m_length++;
+        m_end = new (std::nothrow) Node{new_data, nullptr, m_end};
+
+        if(!m_end -> prev) {
+            m_start = m_end;
+        } else {
+            m_end -> prev -> next = m_end;
+        }
+
+    } else {
+        std::cout << "$ error: element is not unique\n";
+    }
 }
 
 template <class T>
@@ -81,24 +117,6 @@ Set<T>::~Set() {
 }
 
 template <class T>
-void Set<T>::push_front(const T& new_data) {
-    if(is_unique(new_data)) {
-
-        m_length++;
-        m_start = new (std::nothrow) Node{new_data, m_start};
-
-        if(!m_start -> next) {
-            m_end = m_start;
-        } else {
-            m_start -> next -> prev = m_start;
-        }
-
-    } else {
-        std::cout << "$ error: element is not unique\n";
-    }
-}
-
-template <class T>
 void Set<T>::pop_front() {
     if(m_start) {
 
@@ -114,24 +132,6 @@ void Set<T>::pop_front() {
         
     } else {
         std::cout << "$ error: list is empty\n";
-    }
-}
-
-template <class T>
-void Set<T>::push_back(const T& new_data) {
-    if(is_unique(new_data)) {
-
-        m_length++;
-        m_end = new (std::nothrow) Node{new_data, nullptr, m_end};
-
-        if(!m_end -> prev) {
-            m_start = m_end;
-        } else {
-            m_end -> prev -> next = m_end;
-        }
-
-    } else {
-        std::cout << "$ error: element is not unique\n";
     }
 }
 
