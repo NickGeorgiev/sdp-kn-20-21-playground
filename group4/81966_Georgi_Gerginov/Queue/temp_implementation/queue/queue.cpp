@@ -1,6 +1,7 @@
 #ifndef QUEUE_CPP
 #define QUEUE_CPP
 #include <iostream>
+#include <memory>
 
 template <class T>
 class Queue {
@@ -26,6 +27,10 @@ public:
 
 	void push(const T&);
 	void pop();
+
+	const size_t get_length() const;
+	const T& first_data() const;
+	bool empty() const;
 
 	template <class U>
 	friend std::ostream& operator<<(std::ostream&, const Queue<U>&);
@@ -91,6 +96,21 @@ void Queue<T>::pop() {
 	} else {
 		std::cout << "$ error: queue is empty";
 	}
+}
+
+template <class T>
+const size_t Queue<T>::get_length() const {
+	return m_length;
+}
+
+template <class T>
+bool Queue<T>::empty() const {
+	return m_length == 0;
+}
+
+template <class T>
+const T& Queue<T>::first_data() const {
+	return m_start -> data;
 }
 
 template <class T>
