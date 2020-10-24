@@ -17,4 +17,3 @@ tests.o: tests.cpp
 
 run_tests:
 	./tests.exe
-	
