@@ -112,11 +112,8 @@ void SkipList::pop_back() {
 			delete m_end;
 		}
 
-	} else {
-		std::cout << "$ error: list is empty\n";
+		optimize();
 	}
-
-	optimize();
 }
 
 void SkipList::push_front(const int& _new_elem) {
@@ -142,11 +139,8 @@ void SkipList::pop_front() {
             delete m_start;
         }
 
-    } else {
-        std::cout << "$ error: list is empty\n";
+		optimize();
     }
-
-	optimize();
 }
 
 void SkipList::print() const {
