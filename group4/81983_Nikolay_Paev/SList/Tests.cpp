@@ -1,5 +1,4 @@
-#define DOCTEST_CONFIG_IMPLEMENT
-#include "doctest.h"
+#include "../../../shared/specs/specHelper.h"
 
 #include "SList.cpp"
 
@@ -137,8 +136,4 @@ TEST_CASE("Size") {
 
     list.clear();
     CHECK(list.length() == 0);
-}
-
-int main() {
-    doctest::Context().run();
 }

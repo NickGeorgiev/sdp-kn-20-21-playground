@@ -1,4 +1,5 @@
 #include<iostream>
+#include<functional>
 #include<cmath>
 #include"SList.h"
 
@@ -7,33 +8,40 @@ void SList<T>::copy(const SList<T>& other) {
     size = other.size;
     
     if(other.first) {
-
         Node* curr = first = new Node{other.first->data,nullptr,nullptr};
-        Node* otherCurr = other.first->next;
+        Node* otherCurr = other.first;
 
 
-        while(otherCurr) {
-            curr = curr->next = new Node{otherCurr->data,nullptr,nullptr};
+        while(otherCurr->next) {
+            curr = curr->next = new Node{otherCurr->next->data,nullptr,nullptr};
             otherCurr = otherCurr->next;
         }
+
+        optimize();
     }
     else {
         first = nullptr;
     }
-    optimize();
 }
 
 template<class T>
-typename SList<T>::Node* SList<T>::locatePrev(const T& elem) const {
+void SList<T>::pushElementAt(const T& elem,Node*& place) {
+    place = new Node{elem,place,nullptr};
 
+    optimize();
+    ++size;
+}
+
+template<class T>
+typename SList<T>::Node* SList<T>::locatePrev(const T& elem,std::function<bool(T,T)> predicate) const {
     Node* curr = first;
     Node* prev = nullptr;
 
-    while(curr && curr->skip && curr->skip->data < elem) {
+    while(curr && curr->skip && predicate(curr->skip->data,elem)) {
         curr = curr->skip;
     }
 
-    while(curr && curr->data < elem) {
+    while(curr && predicate(curr->data,elem)) {
         prev = curr;
         curr = curr->next;
     }
@@ -43,18 +51,21 @@ typename SList<T>::Node* SList<T>::locatePrev(const T& elem) const {
 
 template<class T>
 void SList<T>::optimize() {
-    size_t elsToSkip = ceil(size/sqrt(2));
+    size_t elementsToSkip = size/sqrt(2);
 
-    if(elsToSkip > 1) {
+    if(elementsToSkip > 1) {
         Node* curr = first;
         Node* prev = first;
         Node* end;
         int i = 0;
 
         while(curr) {
-            if(i % elsToSkip == 0) {
+            if(i % elementsToSkip == 0) {
                 prev->skip = curr;
                 prev = curr;
+            }
+            else {
+                prev->skip = nullptr;
             }
 
             ++i;
@@ -99,35 +110,24 @@ SList<T>::~SList(){
 }
 
 template<class T>
-SList<T>& SList<T>::push(const T& elem) {
-    if(!first) {
-        first = new Node{elem,nullptr,nullptr};
+void SList<T>::push(const T& elem) {
 
-        optimize();
-        ++size;
-        return *this;
-    }
+    Node* prev = locatePrev(elem, [](T first,T second)->bool{
+        return first <= second;});
 
-    Node* prev = locatePrev(elem);
     if(!prev) {
-        first = new Node{elem,first,nullptr};
-
-        optimize();
-        ++size;
-        return *this;
+        pushElementAt(elem,first);
     }
-
-    prev->next = new Node{elem,prev->next,nullptr};
-
-    optimize();
-    ++size;
-    return *this;
+    else {
+        pushElementAt(elem,prev->next);
+    }
 }
 
 template<class T>
-SList<T>& SList<T>::removeElement(const T& elem) {
+void SList<T>::removeElement(const T& elem) {
     if(first) {
-        Node* prev = locatePrev(elem);
+        Node* prev = locatePrev(elem, [](T first,T second)->bool{
+            return first < second;});
         
         if(!prev) {
 
@@ -151,25 +151,18 @@ SList<T>& SList<T>::removeElement(const T& elem) {
         }
         optimize();
     }
-    return *this;
 }
 
 template<class T>
 bool SList<T>::isMember(const T& elem) const {
-    if(!first) {
+    Node* prev = locatePrev(elem, [](T first,T second)->bool{
+        return first <= second;});
+
+    if(!prev) {
         return false;
     }
 
-    Node* prev = locatePrev(elem);
-    if(!prev) {
-        return first->data == elem;
-    }
-
-    if(prev->next) {
-        return prev->next->data == elem;
-    }
-
-    return false;
+    return prev->data == elem;
 }
 
 template<class T>

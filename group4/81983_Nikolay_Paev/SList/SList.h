@@ -1,6 +1,7 @@
 #ifndef S_LIST_H
 #define S_LIST_H
 #include<iostream>
+#include<functional>
 
 template<class T>
 class SList {
@@ -16,9 +17,10 @@ class SList {
 
     void copy(const SList& other);
 
-    Node* locatePrev(const T& elem) const;
-    void optimize();
+    void pushElementAt(const T& elem,Node*& place);
 
+    Node* locatePrev(const T& elem, std::function<bool(T,T)> predicate) const;
+    void optimize();
 
     public:
     void clear();
@@ -28,8 +30,8 @@ class SList {
     SList& operator =(const SList& other);
     ~SList();
 
-    SList& push(const T& elem);
-    SList& removeElement(const T& elem);
+    void push(const T& elem);
+    void removeElement(const T& elem);
 
     bool isMember(const T& elem) const;
     bool empty() const; 
