@@ -6,11 +6,11 @@ output: main.o slist.o
 main.o: main.cpp slist.h
 	g++ -c -std=c++14 main.cpp
 
-SkipList.o: SkipList.h SkipList.cpp
-	g++ -c -std=c++14 SkipList.cpp
+slist.o: slist.h slist.cpp
+	g++ -c -std=c++14 slist.cpp
 
-build_tests: tests.o SkipList.o
-	g++ tests.o SkipList.o -o tests.exe
+build_tests: tests.o slist.o
+	g++ tests.o slist.o -o tests.exe
 
 tests.o: tests.cpp
 	g++ -I $(root) -c tests.cpp
