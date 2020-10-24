@@ -33,6 +33,7 @@ class SkipList
     size_t getNumSkipElements () const;
 
     Node* locate (const int& elem) const;
+    bool member (const int& elem) const;
     void optimize ();
     void addElementAt (const int& elem, Node*& at);
     void addElement (const int& elem);

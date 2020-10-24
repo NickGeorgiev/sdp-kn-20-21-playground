@@ -6,8 +6,6 @@ void SkipList::copySkipList (const SkipList& other)
 {
     if (!other.start)
     {
-        start = nullptr;
-        size = 0;
         return;
     }
 
@@ -38,7 +36,7 @@ void SkipList::deleteSkipList ()
 }
 
 SkipList::SkipList (): start {nullptr}, size {0} {}
-SkipList::SkipList (const SkipList& other)
+SkipList::SkipList (const SkipList& other): start {nullptr}, size {0}
 {
     this->copySkipList(other);
 }
@@ -95,6 +93,12 @@ SkipList::Node* SkipList::locate (const int& elem) const
     }
 
     return current;
+}
+
+bool SkipList::member (const int& elem) const
+{
+    Node* locatedAt = locate(elem);
+    return locatedAt && locatedAt->data == elem;
 }
 
 void SkipList::optimize ()

@@ -12,7 +12,11 @@ TEST_CASE ("Constructors")
 
     SUBCASE ("Copy")
     {
-        SkipList slist;
+        SkipList emptySlist;
+
+        SkipList slist(emptySlist);
+        CHECK (slist.getSize() == 0);
+
         slist.addElement(5);
         slist.addElement(12);
         slist.addElement(3);
@@ -51,6 +55,22 @@ TEST_CASE ("Locate")
     CHECK (slist.locate(0) == nullptr);
     CHECK (slist.locate(20)->data == 17);
     CHECK (slist.locate(11)->data == 5);
+}
+
+TEST_CASE ("Member")
+{
+    SkipList slist;
+    slist.addElement(5);
+    slist.addElement(12);
+    slist.addElement(3);
+    slist.addElement(17);
+
+    CHECK (slist.member(5));
+    CHECK (slist.member(3));
+    CHECK (slist.member(17));
+    CHECK (!slist.member(0));
+    CHECK (!slist.member(11));
+    CHECK (!slist.member(18));
 }
 
 TEST_CASE ("Optimize")
