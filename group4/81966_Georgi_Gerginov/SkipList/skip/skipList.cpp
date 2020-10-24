@@ -144,6 +144,18 @@ void SkipList::pop_front() {
     }
 }
 
+const size_t SkipList::length() const {
+	return m_length;
+}
+
+const SkipList::Node* SkipList::start() const {
+	return m_start;
+}
+
+const SkipList::Node* SkipList::end() const {
+	return m_end;
+}
+
 void SkipList::print() const {
 	Node* curr{m_start};
 	std::cout << "$ ";

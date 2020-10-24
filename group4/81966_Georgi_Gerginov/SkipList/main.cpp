@@ -1,27 +1,143 @@
-#include "skipList.h"
+#include "skip/skipList.h"
+#include "../../../shared/specs/specHelper.h"
 
-int main() {
-	SkipList test{1, 2, 3, 5, 6, 7, 8, 9, 10, 11};
+TEST_CASE("SkipList") {
+	SUBCASE("push methods") {
+		SUBCASE("push_back") {
+			SkipList test{};
 
-	test.print();
-	test.print_skip();
-	test.push(4);
-	test.print();
-	test.print_skip();
+			CHECK(test.length() == 0);
 
-	std::cout << "\n";
+			test.push_back(1);
+			CHECK(test.length() == 1);
+			CHECK(test.start() -> value == 1);
+			CHECK(test.end() -> value == 1);
+			CHECK(test.start() == test.end());
+			CHECK(!test.start() -> next);
+			CHECK(!test.end() -> next);
 
-	test.pop_front();
-	test.pop_back();
-	test.print();
-	test.print_skip();
+			test.push_back(2);
+			CHECK(test.length() == 2);
+			CHECK(test.start() -> value == 1);
+			CHECK(test.end() -> value == 2);
+			CHECK(test.start() != test.end());
+			CHECK(test.start() -> next);
+			CHECK(!test.end() -> next);
+		}
+		
+		SUBCASE("push_front") {
+			SkipList test{};
 
-	std::cout << "\n";
+			CHECK(test.length() == 0);
 
-	test.push_front(1);
-	test.push_back(11);
-	test.print();
-	test.print_skip();
+			test.push_front(1);
+			CHECK(test.length() == 1);
+			CHECK(test.start() -> value == 1);
+			CHECK(test.end() -> value == 1);
+			CHECK(test.start() == test.end());
+			CHECK(!test.start() -> next);
+			CHECK(!test.end() -> next);
 
-	return 0;
+			test.push_front(2);
+			CHECK(test.length() == 2);
+			CHECK(test.start() -> value == 2);
+			CHECK(test.end() -> value == 1);
+			CHECK(test.start() != test.end());
+			CHECK(test.start() -> next);
+			CHECK(!test.end() -> next);
+		}
+
+		SUBCASE("push") {
+			SkipList test{};
+
+			CHECK(test.length() == 0);
+
+			// test.push(1);
+			// CHECK(test.length() == 1);
+			// CHECK(test.start() -> value == 1);
+			// CHECK(test.end() -> value == 1);
+			// CHECK(test.start() == test.end());
+			// CHECK(!test.start() -> next);
+			// CHECK(!test.end() -> next);
+
+			// test.push(2);
+			// CHECK(test.length() == 2);
+			// CHECK(test.start() -> value == 1);
+			// CHECK(test.end() -> value == 2);
+			// CHECK(test.start() != test.end());
+			// CHECK(test.start() -> next);
+			// CHECK(!test.end() -> next);
+
+			// test.push(4);
+			// CHECK(test.length() == 3);
+			// CHECK(test.start() -> value == 1);
+			// CHECK(test.end() -> value == 4);
+			// CHECK(test.start() != test.end());
+			// CHECK(test.start() -> next);
+			// CHECK(!test.end() -> next);
+
+			// test.push(3);
+			// CHECK(test.length() == 4);
+			// CHECK(test.start() -> value == 1);
+			// CHECK(test.end() -> value == 4);
+			// CHECK(test.start() != test.end());
+			// CHECK(test.start() -> next);
+			// CHECK(!test.end() -> next);
+
+			// CHECK(test.start() -> skip);
+			// CHECK(test.start() -> skip -> value == 4);
+		}
+	}
+
+	SUBCASE("pop methods") {
+		SUBCASE("pop_back") {
+			SkipList test{1, 2};
+
+			CHECK(test.length() == 2);
+			CHECK(test.start() -> value == 1);
+			CHECK(test.end() -> value == 2);
+			CHECK(test.start() != test.end());
+			CHECK(test.start() -> next);
+			CHECK(!test.end() -> next);
+			
+			test.pop_back();
+			CHECK(test.length() == 1);
+			CHECK(test.start() -> value == 1);
+			CHECK(test.end() -> value == 1);
+			CHECK(test.start() == test.end());
+			CHECK(!test.start() -> next);
+			CHECK(!test.end() -> next);
+
+			test.pop_back();
+			CHECK(test.length() == 0);
+			CHECK(test.start() == test.end());
+			CHECK(!test.start());
+			CHECK(!test.end());
+		}
+		
+		SUBCASE("pop_front") {
+			SkipList test{1, 2};
+
+			CHECK(test.length() == 2);
+			CHECK(test.start() -> value == 1);
+			CHECK(test.end() -> value == 2);
+			CHECK(test.start() != test.end());
+			CHECK(test.start() -> next);
+			CHECK(!test.end() -> next);
+			
+			test.pop_front();
+			CHECK(test.length() == 1);
+			CHECK(test.start() -> value == 2);
+			CHECK(test.end() -> value == 2);
+			CHECK(test.start() == test.end());
+			CHECK(!test.start() -> next);
+			CHECK(!test.end() -> next);
+
+			// test.pop_front();
+			// CHECK(test.length() == 0);
+			// CHECK(test.start() == test.end());
+			// CHECK(!test.start());
+			// CHECK(!test.end());
+		}
+	}
 }

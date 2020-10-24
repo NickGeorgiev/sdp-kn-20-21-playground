@@ -1,3 +1,3 @@
 all:
-	g++ skipList.cpp main.cpp -o test.exe
+	g++ skip/skipList.cpp main.cpp -o test.exe
 	

@@ -30,6 +30,11 @@ public:
 	void push_front(const int&);
 	void pop_front();
 
+	// Methods added for unit testing
+	const size_t length() const;
+	const Node* start() const;
+	const Node* end() const;
+
 	void print() const;
 	void print_skip() const;
 };
