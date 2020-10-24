@@ -1,10 +1,9 @@
 #include <iostream>
 #include <cmath>
 
-#include "skipList.h"
+#include "SkipList.h"
 
-void skipList::copyList(const skipList& other) {
-    
+void SkipList::copyList(const SkipList& other) {   
     size = other.size;
     first = nullptr;
 
@@ -27,8 +26,7 @@ void skipList::copyList(const skipList& other) {
     optimize(); 
 }
 
-void skipList::deleteList() {
-
+void SkipList::deleteList() {
     size = 0;
 
     while(first) {
@@ -36,17 +34,15 @@ void skipList::deleteList() {
         first = first->next;
         delete save;
     }
-
 }
 
-skipList::skipList():first{nullptr},size{0} {}
+SkipList::SkipList():first{nullptr},size{0} {}
 
-skipList::skipList(const skipList& other) {
-    copyList(other);
-   
+SkipList::SkipList(const SkipList& other) {
+    copyList(other);  
 }
 
-skipList& skipList::operator =(const skipList& other) {
+SkipList& SkipList::operator =(const SkipList& other) {
     if(this != &other) {
         deleteList();
         copyList(other);
@@ -55,11 +51,11 @@ skipList& skipList::operator =(const skipList& other) {
     return *this;
 }
 
-skipList::~skipList() {
+SkipList::~SkipList() {
     deleteList();
 }
 
-void skipList::optimize() {
+void SkipList::optimize() {
     int skipNum = sqrt(size),currIndex = 1;
 
     Node* current = first->next,*previousSkip = first;
@@ -74,12 +70,9 @@ void skipList::optimize() {
         currIndex++;
         current = current->next;
     }
-
-
 } 
 
-skipList::Node* skipList::locate(const int elem) {
-
+SkipList::Node* SkipList::locate(const int elem) const {
     Node* current = first;
     if(!first || current->data > elem){
         return nullptr;
@@ -94,44 +87,26 @@ skipList::Node* skipList::locate(const int elem) {
     }
 
     return current;
-
 }
 
-void skipList::addElement(const int newElem) {
+bool SkipList::member(const int elem) const {
+    if(!locate(elem)) {
+        return false;
+    }
+    else {
+        return locate(elem)->data == elem;
+    }
+}
 
+void SkipList::addElement(const int newElem) {
     Node* toAdd = locate(newElem);
     if(!toAdd) {
         first = new Node(newElem,first);
     }
     else {
-        Node* newNode = new Node(newElem,toAdd->next);
-        toAdd->next = newNode;
+        toAdd->next = new Node(newElem,toAdd->next);
     }
     size++;
     
     optimize();
-
 }
-
-void skipList::printList() const {
-    Node* current = first;
-
-    while(current) {
-        std::cout << current->data << " ";
-        current = current->next;
-    }
-
-    std::cout << std::endl;
-}
-
-void skipList::printSkips() const {
-    Node* current = first;
-
-    while(current) {
-        std::cout << current->data << " ";
-        current = current->skip;
-    }
-
-    std::cout << std::endl;
-}
-

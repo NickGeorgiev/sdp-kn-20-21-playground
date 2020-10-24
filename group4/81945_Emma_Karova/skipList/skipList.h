@@ -1,8 +1,8 @@
-#ifndef __SKIPLIST__HH__
-#define __SKIPLIST__HH__
+#ifndef __SkipList__HH__
+#define __SkipList__HH__
 #include <iostream>
 
-class skipList {
+class SkipList {
 
     struct Node {
         int data;
@@ -15,22 +15,20 @@ class skipList {
     Node* first;
     size_t size;
 
-    void copyList(const skipList& other);
+    void copyList(const SkipList& other);
     void deleteList();
 
     public: 
 
-    skipList();
-    skipList(const skipList& other);
-    skipList& operator =(const skipList& other);
-    ~skipList();
+    SkipList();
+    SkipList(const SkipList& other);
+    SkipList& operator =(const SkipList& other);
+    ~SkipList();
 
     void optimize();
-    Node* locate(const int elem);
+    Node* locate(const int elem) const;
+    bool member(const int elem) const;
     void addElement(const int newElem);
-    
-    void printList() const;
-    void printSkips() const;
 };
 
 #endif
