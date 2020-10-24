@@ -12,12 +12,11 @@ private:
     std::stack<char> symbols{};
 
     bool is_operator(const char& c) const;
+    double operate(const int& a, const int& b, const char& c) const;
 
 public:
     void parse(const std::string&);
-    //double solve();
-
-    std::vector<char> get_result () const;
+    double solve();
 };
 
 

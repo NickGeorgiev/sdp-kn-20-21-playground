@@ -41,17 +41,44 @@ void MathExpr::parse(const std::string& _expr)
     }
 }
 
-// double MathExpr::solve()
-// {
-//     return answer;
-// }
-
-std::vector<char> MathExpr::get_result () const
+double MathExpr::solve()
 {
-    return result;
+    std::stack<double> numbers;
+
+    for(size_t i = 0; i < result.size(); ++i)
+    {
+        if(result[i] >= '0' && result[i] <= '9'){
+            numbers.push(result[i] - '0');
+        }
+
+        if(is_operator(result[i])){
+            if(numbers.size() < 2) throw "Something is wrong.\n";
+
+            double temp = numbers.top();
+            numbers.pop();
+            temp = operate(numbers.top(), temp, result[i]);
+            numbers.pop();
+
+            numbers.push(temp);
+        }
+    }
+
+    if(numbers.size() > 1) throw "Something is wrong.\n";
+
+    return numbers.top();
 }
 
 bool MathExpr::is_operator(const char& c) const
 {
     return c == '+' || c == '-' || c == '*' || c == '/';
+}
+
+double MathExpr::operate(const int& a, const int& b, const char& c) const
+{
+    if(c == '+') return a + b;
+    if(c == '-') return a - b;
+    if(c == '*') return a * b;
+    if(c == '/') return a / b;
+
+    throw "Wrong operator\n";
 }
