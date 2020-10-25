@@ -12,65 +12,95 @@ private:
         SkipListNode *next;
         SkipListNode *skipNext;
 
-        SkipListNode(const T &data, SkipListNode *next)
+        SkipListNode(const T &data, SkipListNode *next, SkipListNode *skipNext)
         {
             this->data = data;
             this->next = next;
-            this->skipNext = nullptr;
+            this->skipNext = skipNext;
         }
     };
 
     SkipListNode *start;
+    SkipListNode *end;
     int size;
 
 public:
     SkipList()
     {
         start = nullptr;
+        end = nullptr;
         size = 0;
     }
 
-    SkipList(const std::vector<T> &array)
+    SkipList(const SkipList &other) : SkipList()
     {
-        start = nullptr;
-        size = 0;
-
-        for (int i = 0; i < array.size(); i++)
+        if (other.size == 0)
         {
-            add(array[i]);
+            return;
+        }
+
+        this->size = other.size;
+
+        SkipListNode *otherIterationNode = other.start;
+
+        SkipListNode *thisNodeToSkip = nullptr;
+
+        int skipStep = sqrt(this->size);
+        int skipStepRemainder = 0;
+
+        while (otherIterationNode)
+        {
+            if (!this->end)
+            {
+                this->start = new SkipListNode(other.start->data, nullptr, nullptr);
+                this->end = this->start;
+                thisNodeToSkip = this->start;
+            }
+            else
+            {
+                this->end->next = new SkipListNode(otherIterationNode->data, nullptr, nullptr);
+                this->end = this->end->next;
+                skipStepRemainder++;
+                if (skipStepRemainder == skipStep)
+                {
+                    thisNodeToSkip->skipNext = this->end;
+                    thisNodeToSkip = thisNodeToSkip->skipNext;
+                    skipStepRemainder = 0;
+                }
+            }
+
+            otherIterationNode = otherIterationNode->next;
+        }
+    }
+
+    SkipList(const std::vector<T> &array) : SkipList()
+    {
+        for (const T &elem : array)
+        {
+            add(elem);
         }
     }
 
     ~SkipList()
     {
-        SkipListNode *iterationNode = start;
-
-        while (iterationNode)
+        while (start)
         {
-            SkipListNode *temp = iterationNode;
-            iterationNode = iterationNode->next;
+            SkipListNode *temp = start;
+            start = start->next;
             delete temp;
         }
     }
 
     void add(const T &data)
     {
-        if (start == nullptr)
+        if (!start)
         {
-            start = new SkipListNode(data, nullptr);
+            start = new SkipListNode(data, nullptr, nullptr);
+            end = start;
         }
-
         else
         {
-            SkipListNode *iteratedNode = start;
-
-            while (iteratedNode->next && iteratedNode->next->data <= data)
-            {
-                iteratedNode = iteratedNode->next;
-            }
-
-            SkipListNode *iteratedNext = iteratedNode->next;
-            iteratedNode->next = new SkipListNode(data, iteratedNext);
+            addElementInNonEmptyList(data);
         }
 
         size++;
@@ -83,11 +113,12 @@ public:
 
     void setSkips()
     {
-
         const int skipStep = sqrt(size);
 
         if (size == 0)
+        {
             return;
+        }
 
         SkipListNode *iterationNode = start;
         SkipListNode *nodeToSkip = start;
@@ -110,11 +141,38 @@ public:
             }
             iterationNode = iterationNode->next;
         }
+
+        nodeToSkip->skipNext = end;
     }
 
     bool contains(const T &data)
     {
-        return containsElement(data, start);
+        SkipListNode *iterationNode = start;
+
+        while (iterationNode)
+        {
+            if (iterationNode->data == data)
+            {
+                return true;
+            }
+
+            if (canMoveForwardWhenData(iterationNode, data))
+            {
+                if (canSkipFromElementWhenData(iterationNode, data))
+                {
+                    iterationNode = iterationNode->skipNext;
+                }
+                else
+                {
+                    iterationNode = iterationNode->next;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
     }
 
     void printList()
@@ -129,28 +187,37 @@ public:
     }
 
 private:
-    bool containsElement(const T &data, const SkipListNode *currentSkipListNode)
+    void addElementInNonEmptyList(const T data)
     {
+        SkipListNode *iteratedNode = start;
 
-        std::cout << currentSkipListNode->data << std::endl;
-
-        if (data == currentSkipListNode->data)
+        while (canMoveForwardWhenData(iteratedNode, data))
         {
-            return true;
+            if (canSkipFromElementWhenData(iteratedNode, data))
+            {
+                iteratedNode = iteratedNode->skipNext;
+            }
+            else
+            {
+                iteratedNode = iteratedNode->next;
+            }
         }
 
-        if (currentSkipListNode->skipNext && currentSkipListNode->skipNext->data <= data)
+        SkipListNode *iteratedNext = iteratedNode->next;
+        iteratedNode->next = new SkipListNode(data, iteratedNext, nullptr);
+        if (!iteratedNext)
         {
-            return containsElement(data, currentSkipListNode->skipNext);
+            end = iteratedNode->next;
         }
+    }
 
-        if (currentSkipListNode->next && currentSkipListNode->next->data <= data)
-        {
-            return containsElement(data, currentSkipListNode->next);
-        }
-        else
-        {
-            return false;
-        }
+    bool canSkipFromElementWhenData(const SkipListNode *elem, const T &data)
+    {
+        return elem->skipNext && elem->skipNext->data <= data;
+    }
+
+    bool canMoveForwardWhenData(SkipListNode *elem, const T &data)
+    {
+        return elem->next && elem->next->data <= data;
     }
 };
