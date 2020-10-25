@@ -1,7 +1,7 @@
-#include "skipList.h"
+#include "SkipList.h"
 int main()
 {
-    skipList test_list;
+    SkipList test_list;
     test_list.add_element(1);
     test_list.add_element(4);
     test_list.add_element(5);
@@ -15,6 +15,6 @@ int main()
 
     test_list.print();
 
-    test_list.optimise();
+
     test_list.skip_print();
 }

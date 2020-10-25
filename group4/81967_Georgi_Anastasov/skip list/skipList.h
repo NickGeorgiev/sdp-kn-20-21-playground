@@ -1,7 +1,7 @@
 #ifndef SKIPLIST_H
 #define SKIPLIST_H
 #include <iostream>
-class skipList
+class SkipList
 {
 private:
     struct Node
@@ -15,20 +15,22 @@ private:
     Node *first;
     int size;
 
-    void find_size();
     void delete_helper();
-    void copy_helper(const skipList &);
+    void copy_helper(const SkipList &);
 
 public:
-    skipList();
-    skipList(const skipList &);
-    ~skipList();
+    SkipList();
+    SkipList(const SkipList &);
+    ~SkipList();
 
-    skipList &operator=(const skipList &);
+    SkipList &operator=(const SkipList &);
 
     void add_element(const int &);
-    int position(const int &) const;
+    Node *position(const int &) const;
+    bool member(const int &) const;
     void print() const;
+
+    size_t get_size() const;
 
     void optimise();
     void skip_print() const;
