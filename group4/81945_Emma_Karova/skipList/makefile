@@ -16,4 +16,4 @@ unitTests.o: unitTests.cpp
 	g++ -I $(root) -c unitTests.cpp
 
 run_tests:
-	./unitTests.exe 
+	./unitTests.exe
