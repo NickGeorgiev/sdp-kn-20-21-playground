@@ -1,10 +1,7 @@
 #include"list.h"
 #include<iostream>
 
-List::List()
-{
-   first = nullptr;
-}
+List::List():first(nullptr){}
 
 List::List(const List& other)
 {
@@ -13,7 +10,10 @@ List::List(const List& other)
 
 List& List::operator=(const List& other)
 {
-   copy(other);
+   if (this != &other)
+   {
+        copy(other);
+   }
    return *this;
 }
 
@@ -24,24 +24,23 @@ List::~List()
 
 void List::copy(const List& other)
 {
-    box* toCopy = other.first;
-    box* previousCopied = nullptr;
+    Box* toCopy = other.first;
+    Box* previousCopied = nullptr;
     
-    if(other.first == nullptr)
-    {
-        first = nullptr;
-        return;
-    }
-    this->first = new box(other.first->data);
-    toCopy = toCopy->next;
-    previousCopied = this->first;
-    
-    while(toCopy != nullptr)
-    {
-        previousCopied->next = new box(toCopy->data);
+    if(other.first)
+        {
+        this->first = new Box(other.first->data);
         toCopy = toCopy->next;
-        previousCopied = previousCopied->next;
+        previousCopied = this->first;
+
+        while(toCopy != nullptr)
+        {
+            previousCopied->next = new Box(toCopy->data);
+            toCopy = toCopy->next;
+            previousCopied = previousCopied->next;
+        }
     }
+   
 }
 
 void List::clear()
@@ -54,26 +53,27 @@ void List::clear()
 
 void List::push(const int& other)
 {
-    box* newBox = new box;
-    newBox->data = other;
-    newBox->next = this->first;
-    this->first = newBox;
+    this->first = new Box(other, this->first);
+    //Box* newBox = new Box;
+    //newBox->data = other;
+    //newBox->next = this->first;
+    //this->first = newBox;
 }
 
 void List::pop()
 {
-    box* saver = this->first->next;
+    Box* saver = this->first->next;
     delete this->first;
     this->first = saver;
 }
 
 void List::print() const
 {
-    box* current = this->first;
+    Box* current = this->first;
     while(current != nullptr)
     {
         std::cout<<current->data<<std::endl;
-           std::cout<<current->next;
+        std::cout<<current->next;
         current = current->next;
         if(current != nullptr)
         {
@@ -83,9 +83,9 @@ void List::print() const
     std::cout<<std::endl;
 }
 
-box* List::locate(size_t index)
+Box* List::locate(size_t index)
 {
-    box* curr = this->first;
+    Box* curr = this->first;
     while(curr != nullptr && index > 0)
     {
         --index;
@@ -94,16 +94,16 @@ box* List::locate(size_t index)
     return curr;
 }
 
-void List::insertAt(const int& other, size_t index)
+void List::insertAt(const int& other, size_t index) 
 {
     if(this->first == nullptr || index == 0)
     {
       (*this).push(other);
       return;
     }
-    box* previous = (*this).locate(index - 1);
+    Box* previous = (*this).locate(index - 1);
     
-    box* newElem = new box;
+    Box* newElem = new Box;
     newElem->data = other;
     newElem->next = previous->next;
     previous->next = newElem;
@@ -116,15 +116,15 @@ void List::deleteAt(size_t index)
         pop();
         return;
     }
-    box* previous = (*this).locate(index - 1);
-    box* saver = previous->next;
+    Box* previous = (*this).locate(index - 1);
+    Box* saver = previous->next;
     previous->next = previous->next->next;
     delete saver;
 }
 
-int List::count(int x)
+int List::count(int x) const
 {
-    box* curr = this->first;
+    Box* curr = this->first;
     int counter = 0;
 
     while(curr != nullptr)
@@ -138,7 +138,7 @@ int List::count(int x)
 void List::push_back(const int& other)
 {
 int counter = 0;
- box* last = this->first;
+ Box* last = this->first;
     while(last != nullptr)
     {
        counter ++;
@@ -154,7 +154,7 @@ void List::operator+=(const int& other)
 
 int List::get_ith(int n)
 {
-    box* curr = this->first;
+    Box* curr = this->first;
     while(curr != nullptr && (n - 1) > 0)
     {
         n--;
@@ -166,30 +166,28 @@ int List::get_ith(int n)
 
 void List::removeAll(int x)
 {
-    if(this->first == nullptr)
+    if(this->first)
     {
-        return;
-    }
-    box* previous = this->first;
-   
-    while(previous->next != nullptr)
-    {     
-        box* saver = previous->next;
-        if(saver->data == x)
-        {
-            previous->next = previous->next->next;
-            delete saver;
+        Box* previous = this->first;   
+        while(previous->next != nullptr)
+        {     
+            Box* saver = previous->next;
+            if(saver->data == x)
+            {
+                previous->next = previous->next->next;
+                delete saver;
+            }
+            else
+            {
+                 previous = previous->next;
+            }      
         }
-        else
-        {
-             previous = previous->next;
-        }      
     }
 }
 
 void List::append(const List& list2)
 {
-    box* helper = list2.first;
+    Box* helper = list2.first;
     while(helper != nullptr)
     {
         (*this).push_back(helper->data);
@@ -204,8 +202,7 @@ void List::operator+=(const List& other)
 
 List List::concat(const List& other)
 {
-    List newList;
-    newList+=(*this);
+    List newList(*this);
     newList+=other;
     return newList;
 }
@@ -218,9 +215,9 @@ List List::operator+(const List& other)
 
 void List::reverse()
 {
-box* prev = nullptr;
-box* next = nullptr;
-box* curr = this->first;
+Box* prev = nullptr;
+Box* next = nullptr;
+Box* curr = this->first;
 while(curr != nullptr)
 {
     next = curr->next;

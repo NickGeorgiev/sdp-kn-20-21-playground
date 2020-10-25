@@ -2,19 +2,20 @@
 #define LIST_H
 #include<iostream>
 
-struct box
+struct Box
 {
     int data;
-    box* next;
+    Box* next;
 
-    box():data(0), next(nullptr){}
-    box(int& data):data(data), next(nullptr){}
+    Box():data(0), next(nullptr){}
+    Box(int& data):data(data), next(nullptr){}
+    Box(const int& data, Box* next):data(data), next(next){}
 };
 
 class List
 {
 private:
-box* first;
+Box* first;
 
 public:
 List();
@@ -30,12 +31,12 @@ void pop();
 
 void print() const;
 
-box* locate(size_t index);
+Box* locate(size_t index);
 
 void insertAt(const int& other, size_t index);
 void deleteAt(size_t index);
 
-int count(int x);
+int count(int x) const;
 void push_back(const int& other);
 void operator+=(const int& other);
 int get_ith(int n);
