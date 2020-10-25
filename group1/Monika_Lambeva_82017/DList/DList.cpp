@@ -2,32 +2,35 @@
 
 void DList::copy(const DList& other)
 {
-if(other.first == nullptr)
+if(!other.first)
 {
     this->first = nullptr;
     return;
 }
 
-box* toCopy = other.first;
-box* prevCopied = nullptr;
+Box* toCopy = other.first;
+Box* prevCopied = nullptr;
 
-this->first = new box(other.first->data);
+this->first = new Box(other.first->data);
 toCopy = toCopy->next;
 prevCopied = this->first;
 
-    while(toCopy != nullptr)
+    while(toCopy)
     {
-        prevCopied->next = new box(toCopy->data);
+        //prevCopied->next = new Box(toCopy->data);
+        //toCopy = toCopy->next;
+        //prevCopied->next->prev = prevCopied;
+        //prevCopied = prevCopied->next;       
+        prevCopied->next = new Box(toCopy->data, nullptr, prevCopied);
         toCopy = toCopy->next;
-        prevCopied->next->prev = prevCopied;
-        prevCopied = prevCopied->next;        
+        prevCopied = prevCopied->next;   
     }
 }
 
 void DList::clear()
 {
-    box* curr = this->first;
-    box* save;
+    Box* curr = this->first;
+    Box* save;
     while(curr != nullptr)
     {
         save = curr;
@@ -36,10 +39,7 @@ void DList::clear()
     }
 }
 
-DList::DList()
-{
-    this->first = nullptr;
-}
+DList::DList():first(nullptr){}
 
 DList::DList(const DList& other)
 {
@@ -61,46 +61,42 @@ DList::~DList()
     clear();
 }
 
-//box* getFirst()const
-//{
-//return this->first;
-//}
 void DList::pop()
 {
-    box* saver = this->first->next;
-    delete this->first;
-    this->first = saver;
+    if(this->first)
+    {
+        this->first = this->first->next;
+        delete this->first->prev;   
+        this->first->prev = nullptr;
+        this->first->next=this->first->next->next;
+    }
+    else
+    {
+        std::cout<<"Cannot pop!";
+        return;
+    } 
 }
 
 void DList::push(const int& other)
 {
-box* newElem = new box;
-newElem->data = other;
-newElem->next = this->first;
-if(this->first != nullptr)
-{
-    this->first->prev = newElem;
-}
-this->first = newElem;
+    this->first = new Box(other, this->first, nullptr);
 }
 
 void DList::push_back(const int& other)
 {
-    if(this->first == nullptr)
+    if(this->first)
     {
-        (*this).push(other);
-        return;
+        Box* last = this->first;
+        while(last->next != nullptr)
+        {
+            last = last->next;
+        }
+        last->next = new Box(other, nullptr, last);
     }
-   box* newElem = new box;
-   newElem->data = other;
-   newElem->next = nullptr;
-   box* last = this->first;
-   while(last->next != nullptr)
-   {
-       last = last->next;
-   }
-last->next = newElem;
-newElem->prev = last;
+    else
+    {
+        push(other);
+    }    
 }
 
 DList& DList::operator+= (const int &x)
@@ -118,7 +114,7 @@ DList DList::operator+ (const int& x) const
 
 std::ostream& operator<<(std::ostream& out, const DList& other)
 {
- box* curr = other.first;
+ Box* curr = other.first;
     while(curr != nullptr)
     {
         out << curr->data << " ";
@@ -127,9 +123,9 @@ std::ostream& operator<<(std::ostream& out, const DList& other)
   return out;
 }
 
-int DList::count(box* l, int x)
+int DList::count(Box* l, int x) const
 {
-box* curr = this->first;
+Box* curr = this->first;
 while(curr->data != l->data && curr != nullptr)
 {
     curr = curr->next;
@@ -143,19 +139,12 @@ while(curr != nullptr)
 return counter;
 }
 
-int DList::countFromBegin(const int& x)
+int DList::countFromBegin(const int& x) const
 {
-    box* curr = this->first;
-    int counter = 0;
-    while(curr != nullptr)
-    {
-        if(curr->data == x) counter++;
-        curr = curr->next;
-    }
-    return counter;
+    return (*this).count(this->first, x);
 }
 
-box* DList::range(int x, int y)
+Box* DList::range(int x, int y)
 {
 while(y >= x)
 {
@@ -167,12 +156,7 @@ return this->first;
 
 void DList::append(const DList& other)
 {
-    box* saver = this->first;
-    while(saver != nullptr)
-    {
-        saver = saver->next;
-    }
-    box* helper = other.first;
+    Box* helper = other.first;
     while(helper != nullptr)
     {
        (*this).push_back(helper->data);
@@ -182,48 +166,50 @@ void DList::append(const DList& other)
 
 DList& DList::concat(const DList& l1, const DList& l2)
 {
-    DList newList;
-
-    newList.append(l1);
+    DList newList(l1);
     newList.append(l2);
     *this = newList;    
     return *this;
 }
 
 void DList::removeAll(const int& x)
-{
-if(this->first == nullptr)
-{
-    this->first = nullptr;
-    return;
-}
-box* curr = this->first;
-box* prev = nullptr;
-    while(curr != nullptr)
+{     
+    if(this->first)
     {
-        if(curr->data == x) 
-        {
-            if(curr->prev == nullptr)
+        Box* curr = this->first;
+        Box* saver = curr->next;
+        while(curr)
+        {            
+            if(curr->data == x) 
             {
-                this->first = curr->next;
-               
-            }
-            else
-            {
-               prev->next = curr->next;
-             curr->next->prev = prev;
-            }              
+                if(!curr->prev)
+                {
+                    (*this).pop();
+                }                
+                else if(!saver)
+                {
+                    curr->prev->next = nullptr;
+                    delete curr;
+                    return;
+                }
+                else
+                {
+                    curr->prev->next = curr->next;
+                    curr->next->prev = curr->prev;
+                    delete curr;
+                }         
+            } 
+            curr = saver;
+            saver = saver->next;
         }    
-        prev = curr;
-        curr = curr->next;
     }
 }
 
 void DList::reverse()
 {
-    box* curr = this->first;
-    box* next = nullptr;
-    box* prev = nullptr;
+    Box* curr = this->first;
+    Box* next = nullptr;
+    Box* prev = nullptr;
     while(curr != nullptr)
     {
         next = curr->next;
@@ -237,7 +223,7 @@ void DList::reverse()
 
 void DList::removeAllDuplicates()
 {
-    box* curr = this->first;
+    Box* curr = this->first;
     while(curr != nullptr)
     {
         if(countFromBegin(curr->data) > 1) (*this).removeAll(curr->data);
@@ -252,8 +238,8 @@ void DList::removeElement(const int& index)
         (*this).pop();
         return;
     }
-    box* curr = this->first;
-    box* prev = nullptr;
+    Box* curr = this->first;
+    Box* prev = nullptr;
     int i = 0;
     while(i != index && curr != nullptr)
     {
@@ -261,46 +247,53 @@ void DList::removeElement(const int& index)
         prev = curr;
         curr = curr->next;
     }
-    if(curr == nullptr) return;
-    prev->next = curr->next;
-    curr->next->prev = prev;
+    if(curr) 
+    {
+        prev->next = curr->next;
+        curr->next->prev = prev;
+    }
 }
 
 void DList::mergeWithSorted(const DList& other)
 {
-box* curr = nullptr;
-box* next = this->first;
-
-box* otherCurr = other.first;
-
-    while(otherCurr != nullptr)
+    Box* curr = nullptr;
+    Box* next = this->first;
+    Box* otherCurr = other.first;
+    if(next)
     {
-        if(curr == nullptr && otherCurr->data <= next->data)
+        while(otherCurr != nullptr)
         {
-            (*this).push(otherCurr->data);
-            otherCurr = otherCurr->next;
+            if(curr == nullptr && otherCurr->data <= next->data)
+            {
+                (*this).push(otherCurr->data);
+                otherCurr = otherCurr->next;
+            }
+            else if(next == nullptr && otherCurr->data >= curr->data)
+            {
+                (*this).push_back(otherCurr->data);
+                otherCurr = otherCurr->next;
+                curr = nullptr;
+                next = this->first;
+            }
+            else if(otherCurr->data >= curr->data && otherCurr->data <= next->data)
+            {
+                Box* newBox = new Box;
+                newBox->data = otherCurr->data;
+                curr->next = newBox;
+                newBox->prev = curr;
+                newBox->next = next;
+                next->prev = newBox;
+
+                otherCurr = otherCurr->next;
+                curr = nullptr;
+                next = this->first;
+            }   
+            curr = next;
+            next = next->next;     
         }
-        else if(next == nullptr && otherCurr->data >= curr->data)
-        {
-            (*this).push_back(otherCurr->data);
-            otherCurr = otherCurr->next;
-            curr = nullptr;
-            next = this->first;
-        }
-        else if(otherCurr->data >= curr->data && otherCurr->data <= next->data)
-        {
-            box* newBox = new box;
-            newBox->data = otherCurr->data;
-            curr->next = newBox;
-            newBox->prev = curr;
-            newBox->next = next;
-            next->prev = newBox;
-    
-            otherCurr = otherCurr->next;
-            curr = nullptr;
-            next = this->first;
-        }   
-        curr = next;
-        next = next->next;     
+    }
+    else
+    {
+        append(other);
     }
 }

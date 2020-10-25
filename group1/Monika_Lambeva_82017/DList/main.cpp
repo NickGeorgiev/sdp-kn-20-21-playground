@@ -26,9 +26,10 @@ DList l;
 //l.removeAllDuplicates();
 //std::cout<<l;
 //l.reverse();
-//std::cout<<l;
-//l.removeElement(5);
-//std::cout<<l;
+//std::cout<<l<<std::endl;
+//l.removeAll(5);
+//std::cout<<l<<std::endl;
+//l.pop();
 
 std::cout << l << " " << list << std::endl;
 l.mergeWithSorted(list);
