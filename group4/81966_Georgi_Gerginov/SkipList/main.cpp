@@ -133,11 +133,11 @@ TEST_CASE("SkipList") {
 			CHECK(!test.start() -> next);
 			CHECK(!test.end() -> next);
 
-			// test.pop_front();
-			// CHECK(test.length() == 0);
-			// CHECK(test.start() == test.end());
-			// CHECK(!test.start());
-			// CHECK(!test.end());
+			test.pop_front();
+			CHECK(test.length() == 0);
+			CHECK(test.start() == test.end());
+			CHECK(!test.start());
+			CHECK(!test.end());
 		}
 	}
 }

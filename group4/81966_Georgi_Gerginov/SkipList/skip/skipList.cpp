@@ -101,6 +101,8 @@ void SkipList::pop_back() {
 
 		if(m_end == m_start) {
 			delete m_end;
+			m_start = nullptr;
+			m_end = nullptr;
 		} else {
 			Node* curr{m_start};
 
@@ -133,13 +135,15 @@ void SkipList::pop_front() {
 		Node* pt_to_start{m_start};
         m_length--;
 
-        if(m_start -> next) {
-            m_start = m_start -> next;
+        if(m_start == m_end) {
+            delete m_start;
+			m_start = nullptr;
+			m_end = nullptr;
+        } else {
+			m_start = m_start -> next;
             delete pt_to_start;
 			
 			optimize();
-        } else {
-            delete m_start;
         }
     }
 }
