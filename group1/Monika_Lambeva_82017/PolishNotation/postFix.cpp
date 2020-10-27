@@ -1,19 +1,19 @@
+#include"postFix.h"
 #include<iostream>
 #include<cassert>
 #include<cmath>
-#include"postFix.h"
 
-bool isDigit(char x)
+bool PostFix::isDigit(char x)
 {
     return x >= '0' && x <= '9';
 }
 
-bool isOperator(char x)
+bool PostFix::isOperator(char x)
 {
     return x == '*' || x == '/' || x == '+' || x == '-' || x == '^';
 }
 
-int priorityOperator(char x)
+int PostFix::priorityOperator(char x)
 {   
     if(x == '^') return 3;
     else if(x == '*' || x == '/') return 2;
@@ -22,14 +22,6 @@ int priorityOperator(char x)
 }
 
 PostFix::PostFix(std::string expresion):expresion(expresion){}
-
-//Бих използвала, ако се справя с doctest :D
-//PostFix::PostFix(std::vector<char> num):num(num){};
-
- //std::vector<char> PostFix::getNum()const
- //{
- //    return this->num;
- //}
 
 //ex.18.2
 bool PostFix::correctBracket() 
