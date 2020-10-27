@@ -1,7 +1,7 @@
-#define DOCTEST_CONFIG_IMPLEMENT
-#include"../../../shared/specs/doctest.h"
+//#define DOCTEST_CONFIG_IMPLEMENT
+//#include"../../../shared/specs/doctest.h"
+#include"shared/specs/specHelper.h"
 #include "postFix.h"
-#include<iostream>
 
 
 TEST_CASE("Correction test")
@@ -28,10 +28,3 @@ TEST_CASE("Calculating test")
     CHECK(s.calculating() == 3);
     CHECK(f.calculating() == -3);
 }  
-
-int main()
-{   
-    doctest::Context().run();    
-
-    return 0;
-}
