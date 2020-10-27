@@ -12,24 +12,26 @@ void SkipList::del() {
 }
 
 void SkipList::optimize() const {
-	Node* curr{m_start};
-	Node* node_to_optimize{m_start};
+	if(m_length > 1) {
+		Node* curr{m_start};
+		Node* node_to_optimize{m_start};
 
-	size_t curr_pos{0};
-	size_t pos_to_skip_to{(size_t)sqrt(m_length)};
+		size_t curr_pos{0};
+		size_t pos_to_skip_to{(size_t)sqrt(m_length)};
 	
-	while(curr) {
-		if(curr_pos % pos_to_skip_to == 0 || curr == m_end) {
-			if(curr == m_end && curr -> skip) {
-				curr -> skip = nullptr;
+		while(curr) {
+			if(curr_pos % pos_to_skip_to == 0 || curr == m_end) {
+				if(curr == m_end && curr -> skip) {
+					curr -> skip = nullptr;
+				}
+
+				node_to_optimize -> skip = curr;
+				node_to_optimize = curr;
 			}
 
-			node_to_optimize -> skip = curr;
-			node_to_optimize = curr;
+			curr = curr -> next;
+			curr_pos++;
 		}
-
-		curr = curr -> next;
-		curr_pos++;
 	}
 }
 
@@ -40,14 +42,16 @@ SkipList::Node* SkipList::locate(const int& _value) const {
         curr = curr -> skip;
     }
 
-    while(curr && curr -> value < _value) {
+    while(curr && curr -> next && curr -> next -> value < _value) {
         curr = curr -> next;
     }
 
 	return curr;
 }
 
-SkipList::SkipList(const std::initializer_list<const int>& _init_list) : m_length{0}, m_start{nullptr} {
+SkipList::SkipList() : m_length{0}, m_start{nullptr}, m_end{nullptr} {}
+
+SkipList::SkipList(const std::initializer_list<const int>& _init_list) : SkipList{} {
 	for(const int& curr : _init_list) {
 		push_back(curr);
 	}
@@ -60,23 +64,24 @@ SkipList::~SkipList() {
 }
 
 void SkipList::push(const int& _new_elem) {
-	Node* curr{m_start};
-	Node* after = locate(_new_elem);
+	if(m_start) {
+		Node* prev = locate(_new_elem);
 
-	while(curr -> next && curr -> next != after) {
-		curr = curr -> next;
-	}
+		if(prev == m_start && _new_elem < prev -> value) {
+			push_front(_new_elem);
+		} else if(prev == m_end) {
+			push_back(_new_elem);
+		} else {
+			Node* pt_to_prev{prev};
 
-	if(after == m_start) {
-		push_front(_new_elem);
-	} else if(curr == m_end) {
-		push_back(_new_elem);
+			m_length++;
+			prev = new (std::nothrow) Node{_new_elem, prev -> next};
+			pt_to_prev -> next = prev;
+
+			optimize();
+		} 
 	} else {
-		m_length++;
-		after = new (std::nothrow) Node{_new_elem, after};
-		curr -> next = after;
-
-		optimize();
+		push_back(_new_elem);
 	}
 }
 
@@ -142,6 +147,7 @@ void SkipList::pop_front() {
         } else {
 			m_start = m_start -> next;
             delete pt_to_start;
+			pt_to_start = nullptr;
 			
 			optimize();
         }

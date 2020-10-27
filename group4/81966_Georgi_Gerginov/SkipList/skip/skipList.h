@@ -21,6 +21,7 @@ class SkipList {
 	Node* locate(const int&) const;
 
 public:
+	SkipList();
 	SkipList(const std::initializer_list<const int>&);
 	~SkipList();
 

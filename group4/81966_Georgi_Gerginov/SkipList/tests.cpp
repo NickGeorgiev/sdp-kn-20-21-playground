@@ -4,7 +4,7 @@
 TEST_CASE("SkipList") {
 	SUBCASE("push methods") {
 		SUBCASE("push_back") {
-			SkipList test{};
+			SkipList test;
 
 			CHECK(test.length() == 0);
 
@@ -26,7 +26,7 @@ TEST_CASE("SkipList") {
 		}
 		
 		SUBCASE("push_front") {
-			SkipList test{};
+			SkipList test;
 
 			CHECK(test.length() == 0);
 
@@ -48,44 +48,53 @@ TEST_CASE("SkipList") {
 		}
 
 		SUBCASE("push") {
-			SkipList test{};
+			SkipList test;
 
 			CHECK(test.length() == 0);
 
-			// test.push(1);
-			// CHECK(test.length() == 1);
-			// CHECK(test.start() -> value == 1);
-			// CHECK(test.end() -> value == 1);
-			// CHECK(test.start() == test.end());
-			// CHECK(!test.start() -> next);
-			// CHECK(!test.end() -> next);
+			test.push(1);
+			CHECK(test.length() == 1);
+			CHECK(test.start() -> value == 1);
+			CHECK(test.end() -> value == 1);
+			CHECK(test.start() == test.end());
+			CHECK(!test.start() -> next);
+			CHECK(!test.end() -> next);
 
-			// test.push(2);
-			// CHECK(test.length() == 2);
-			// CHECK(test.start() -> value == 1);
-			// CHECK(test.end() -> value == 2);
-			// CHECK(test.start() != test.end());
-			// CHECK(test.start() -> next);
-			// CHECK(!test.end() -> next);
+			test.push(2);
+			CHECK(test.length() == 2);
+			CHECK(test.start() -> value == 1);
+			CHECK(test.end() -> value == 2);
+			CHECK(test.start() != test.end());
+			CHECK(test.start() -> next);
+			CHECK(!test.end() -> next);
 
-			// test.push(4);
-			// CHECK(test.length() == 3);
-			// CHECK(test.start() -> value == 1);
-			// CHECK(test.end() -> value == 4);
-			// CHECK(test.start() != test.end());
-			// CHECK(test.start() -> next);
-			// CHECK(!test.end() -> next);
+			test.push(4);
+			CHECK(test.length() == 3);
+			CHECK(test.start() -> value == 1);
+			CHECK(test.end() -> value == 4);
+			CHECK(test.start() != test.end());
+			CHECK(test.start() -> next);
+			CHECK(!test.end() -> next);
 
-			// test.push(3);
-			// CHECK(test.length() == 4);
-			// CHECK(test.start() -> value == 1);
-			// CHECK(test.end() -> value == 4);
-			// CHECK(test.start() != test.end());
-			// CHECK(test.start() -> next);
-			// CHECK(!test.end() -> next);
+			test.push(3);
+			CHECK(test.length() == 4);
+			CHECK(test.start() -> value == 1);
+			CHECK(test.end() -> value == 4);
+			CHECK(test.start() != test.end());
+			CHECK(test.start() -> next);
+			CHECK(!test.end() -> next);
 
-			// CHECK(test.start() -> skip);
-			// CHECK(test.start() -> skip -> value == 4);
+			test.push(5);
+			test.push(6);
+			test.push(7);
+			test.push(8);
+			test.push(9);
+
+			CHECK(test.start() -> skip);
+			CHECK(test.start() -> skip -> value == 4);
+			CHECK(test.start() -> skip -> skip -> value == 7);
+			CHECK(test.start() -> skip -> skip -> skip -> value == 9);
+			CHECK(!test.end() -> skip);
 		}
 	}
 
