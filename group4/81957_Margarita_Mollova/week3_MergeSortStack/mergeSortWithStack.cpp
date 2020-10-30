@@ -63,7 +63,7 @@ void mergeSortStack (vector<int>& arr)
             states.pop();
             currentState = states.top();
             while (!states.empty() && 
-                   currentState.start >= states.top().end && currentState.end <= states.top().end)
+                   currentState.start >= states.top().start && currentState.end <= states.top().end)
             {
                 merge(arr, states.top());
                 states.pop();
