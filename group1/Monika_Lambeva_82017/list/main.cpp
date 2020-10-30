@@ -19,7 +19,6 @@ int main()
  sec.push_back(7);
  sec.push_back(8);
 
-
 l+=sec;
 l.print();
 l.reverse();
