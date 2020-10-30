@@ -3,13 +3,17 @@
 Deque::Node::Node(const Patient& _patient, Node* _next = nullptr, Node* _prev = nullptr) : patient{_patient}, next{_next}, prev{_prev} {}
 
 void Deque::del() {
-	while(m_start -> next) {
-		m_start = m_start -> next;
-		delete m_start -> prev;
-	}
+	if(m_start) {
+		while(m_start -> next) {
+			m_start = m_start -> next;
+			delete m_start -> prev;
+			m_start -> prev = nullptr;
+		}
 	
-	delete m_start;
-	m_length = 0;
+		delete m_start;
+		m_start = m_end = nullptr;
+		m_length = 0;
+	}
 }
 
 void Deque::update_last_crit() {
@@ -45,6 +49,8 @@ void Deque::push_front(const Patient& new_data) {
 	} else {
 		m_start -> next -> prev = m_start;
 	}
+
+	update_last_crit();
 }
 
 void Deque::pop_front() {
@@ -60,6 +66,8 @@ void Deque::pop_front() {
 
 		m_length--;
 	}
+
+	update_last_crit();
 }
 
 void Deque::push_back(const Patient& new_data) {
@@ -81,16 +89,22 @@ void Deque::pop_back() {
 			m_end -> next = nullptr;
 		} else {
 			delete m_end;
-			m_start = m_end = nullptr;
+			m_end = m_start = nullptr;
 		}
 
 		m_length--;
 	}
+
+	update_last_crit();
 }
 
 void Deque::push_emergency(const Patient& new_data) {
-	if(m_start) {
+	if(!m_start || !m_last_critical_patient) {
+		push_front(new_data);
+	} else if (m_start) {
 		m_last_critical_patient = new (std::nothrow) Node{new_data, m_last_critical_patient -> next, m_last_critical_patient};
+		m_last_critical_patient -> prev -> next = m_last_critical_patient;
+		m_last_critical_patient -> next -> prev = m_last_critical_patient;
 		m_length++;
 
 		if(m_last_critical_patient -> prev == m_end) {
@@ -100,8 +114,6 @@ void Deque::push_emergency(const Patient& new_data) {
 		if(m_last_critical_patient -> next == m_start) {
 			m_start = m_last_critical_patient;
 		}
-	} else {
-		push_front(new_data);
 	}
 
 	update_last_crit();

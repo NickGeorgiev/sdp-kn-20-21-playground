@@ -49,6 +49,7 @@ void Set<T>::del() {
     }
 
     delete m_start;
+	m_length = 0;
 }
 
 template <class T>

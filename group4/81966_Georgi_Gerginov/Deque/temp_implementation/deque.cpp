@@ -39,13 +39,17 @@ Deque<T>::Node::Node(const T& _data, Node* _next, Node* _prev) : data{_data}, ne
 
 template <class T>
 void Deque<T>::del() {
-	while(m_start -> next) {
-		m_start = m_start -> next;
-		delete m_start -> prev;
-	}
+	if(m_start) {
+		while(m_start -> next) {
+			m_start = m_start -> next;
+			delete m_start -> prev;
+			m_start -> prev = nullptr;
+		}
 	
-	delete m_start;
-	m_length = 0;
+		delete m_start;
+		m_start = m_end = nullptr;
+		m_length = 0;
+	}
 }
 
 template <class T>
