@@ -28,7 +28,11 @@ public:
 	void pop_front();
 	void push_back(const T&);
 	void pop_back();
-	void push_emergency(const T&);
+
+	const size_t length() const;
+	bool empty() const;
+	const T& front() const;
+	const T& back() const;
 
 	template <class U>
 	friend std::ostream& operator<<(std::ostream&, const Deque<U>&);
@@ -39,17 +43,19 @@ Deque<T>::Node::Node(const T& _data, Node* _next, Node* _prev) : data{_data}, ne
 
 template <class T>
 void Deque<T>::del() {
-	if(m_start) {
-		while(m_start -> next) {
-			m_start = m_start -> next;
-			delete m_start -> prev;
-			m_start -> prev = nullptr;
-		}
-	
-		delete m_start;
-		m_start = m_end = nullptr;
-		m_length = 0;
+	if(!m_start) {
+		return;
 	}
+
+	while(m_start -> next) {
+		m_start = m_start -> next;
+		delete m_start -> prev;
+		m_start -> prev = nullptr;
+	}
+	
+	delete m_start;
+	m_start = m_end = nullptr;
+	m_length = 0;
 }
 
 template <class T>
@@ -81,18 +87,20 @@ void Deque<T>::push_front(const T& new_data) {
 
 template <class T>
 void Deque<T>::pop_front() {
-	if(m_start) {
-		if(m_start != m_end) {
-			m_start = m_start -> next;
-			delete m_start -> prev;
-			m_start -> prev = nullptr;
-		} else {
-			delete m_start;
-			m_start = m_end = nullptr;
-		}
-
-		m_length--;
+	if(!m_start) {
+		return;
 	}
+
+	if(m_start != m_end) {
+		m_start = m_start -> next;
+		delete m_start -> prev;
+		m_start -> prev = nullptr;
+	} else {
+		delete m_start;
+		m_start = m_end = nullptr;
+	}
+
+	m_length--;
 }
 
 template <class T>
@@ -109,18 +117,40 @@ void Deque<T>::push_back(const T& new_data) {
 
 template <class T>
 void Deque<T>::pop_back() {
-	if(m_end) {
-		if(m_start != m_end) {
-			m_end = m_end -> prev;
-			delete m_end -> next;
-			m_end -> next = nullptr;
-		} else {
-			delete m_end;
-			m_start = m_end = nullptr;
-		}
-
-		m_length--;
+	if(!m_end) {
+		return;
 	}
+
+	if(m_start != m_end) {
+		m_end = m_end -> prev;
+		delete m_end -> next;
+		m_end -> next = nullptr;
+	} else {
+		delete m_end;
+		m_start = m_end = nullptr;
+	}
+
+	m_length--;
+}
+
+template <class T>
+const size_t Deque<T>::length() const {
+	return m_length;
+}
+
+template <class T>
+bool Deque<T>::empty() const {
+	return m_length == 0;
+}
+
+template <class T>
+const T& Deque<T>::front() const {
+	return m_start -> data;
+}
+
+template <class T>
+const T& Deque<T>::back() const {
+	return m_end -> data;
 }
 
 template <class T>

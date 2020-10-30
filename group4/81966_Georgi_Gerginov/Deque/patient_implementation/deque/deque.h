@@ -32,6 +32,11 @@ public:
 	void pop_back();
 	void push_emergency(const Patient&);
 
+	const size_t length() const;
+	bool empty() const;
+	const Patient& front() const;
+	const Patient& back() const;
+
 	friend std::ostream& operator<<(std::ostream&, const Deque&);
 };
 

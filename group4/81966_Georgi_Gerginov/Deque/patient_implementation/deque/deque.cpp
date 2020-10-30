@@ -3,17 +3,19 @@
 Deque::Node::Node(const Patient& _patient, Node* _next = nullptr, Node* _prev = nullptr) : patient{_patient}, next{_next}, prev{_prev} {}
 
 void Deque::del() {
-	if(m_start) {
-		while(m_start -> next) {
-			m_start = m_start -> next;
-			delete m_start -> prev;
-			m_start -> prev = nullptr;
-		}
-	
-		delete m_start;
-		m_start = m_end = nullptr;
-		m_length = 0;
+	if(!m_start) {
+		return;
 	}
+
+	while(m_start -> next) {
+		m_start = m_start -> next;
+		delete m_start -> prev;
+		m_start -> prev = nullptr;
+	}
+	
+	delete m_start;
+	m_start = m_end = nullptr;
+	m_length = 0;
 }
 
 void Deque::update_last_crit() {
@@ -54,20 +56,22 @@ void Deque::push_front(const Patient& new_data) {
 }
 
 void Deque::pop_front() {
-	if(m_start) {
-		if(m_start != m_end) {
-			m_start = m_start -> next;
-			delete m_start -> prev;
-			m_start -> prev = nullptr;
-		} else {
-			delete m_start;
-			m_start = m_end = nullptr;
-		}
-
-		m_length--;
+	if(!m_start) {
+		return;
 	}
 
-	update_last_crit();
+	if(m_start != m_end) {
+		m_start = m_start -> next;
+		delete m_start -> prev;
+		m_start -> prev = nullptr;
+
+		update_last_crit();
+	} else {
+		delete m_start;
+		m_start = m_end = nullptr;
+	}
+
+	m_length--;
 }
 
 void Deque::push_back(const Patient& new_data) {
@@ -82,20 +86,22 @@ void Deque::push_back(const Patient& new_data) {
 }
 
 void Deque::pop_back() {
-	if(m_end) {
-		if(m_start != m_end) {
-			m_end = m_end -> prev;
-			delete m_end -> next;
-			m_end -> next = nullptr;
-		} else {
-			delete m_end;
-			m_end = m_start = nullptr;
-		}
-
-		m_length--;
+	if(!m_end) {
+		return;
 	}
 
-	update_last_crit();
+	if(m_start != m_end) {
+		m_end = m_end -> prev;
+		delete m_end -> next;
+		m_end -> next = nullptr;
+
+		update_last_crit();
+	} else {
+		delete m_end;
+		m_end = m_start = nullptr;
+	}
+
+	m_length--;
 }
 
 void Deque::push_emergency(const Patient& new_data) {
@@ -114,9 +120,25 @@ void Deque::push_emergency(const Patient& new_data) {
 		if(m_last_critical_patient -> next == m_start) {
 			m_start = m_last_critical_patient;
 		}
-	}
 
-	update_last_crit();
+		update_last_crit();
+	}
+}
+
+const size_t Deque::length() const {
+	return m_length;
+}
+
+bool Deque::empty() const {
+	return m_length == 0;
+}
+
+const Patient& Deque::front() const {
+	return m_start -> patient;
+}
+
+const Patient& Deque::back() const {
+	return m_end -> patient;
 }
 
 std::ostream& operator<<(std::ostream& out, const Deque& _deque) {
