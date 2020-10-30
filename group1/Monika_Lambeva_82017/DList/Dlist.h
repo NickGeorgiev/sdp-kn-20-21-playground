@@ -16,16 +16,8 @@ Box(const int& data, Box* next, Box* prev):data(data), next(next), prev(prev){}
 class DList
 {
 private:
-//struct Box
-//{
-//int data;
-//Box* next;
-//Box* prev;
-//
-//Box():data(0), next(nullptr), prev(nullptr){}
-//Box(const int& data):data(data), next(nullptr), prev(nullptr){}
-//};
 Box* first;
+Box* last;
 
 void copy(const DList& other);
 void clear();
@@ -35,8 +27,6 @@ DList();
 DList(const DList& other);
 DList& operator=(const DList& other);
 ~DList();
-
-//Box* getFirst()const;
 
 void pop();
 void push(const int& other);
@@ -51,6 +41,7 @@ Box* range(int x, int y);
 void append(const DList& other);
 DList& concat(const DList& l1, const DList& l2);
 void removeAll(const int& x);
+static void swap(Box* curr, Box* next, Box* prev);
 void reverse();
 void removeAllDuplicates();
 void removeElement(const int& index);
