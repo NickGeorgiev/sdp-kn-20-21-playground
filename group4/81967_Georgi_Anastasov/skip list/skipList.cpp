@@ -56,11 +56,6 @@ void SkipList::copy_helper(const SkipList &other_list)
 
 void SkipList::add_element(const int &new_element)
 {
-    if (!member(new_element))
-    {
-        return;
-    }
-
     Node *element_position = position(new_element);
 
     if (first == nullptr || element_position == nullptr)
@@ -102,7 +97,7 @@ bool SkipList::member(const int &new_element) const
 {
     if (first == nullptr)
     {
-        return true;
+        return false;
     }
 
     Node *current_node = first;
@@ -111,7 +106,7 @@ bool SkipList::member(const int &new_element) const
     {
         if (new_element == current_node->data)
         {
-            return false;
+            return true;
         }
         current_node = current_node->skip;
     }
@@ -120,12 +115,12 @@ bool SkipList::member(const int &new_element) const
     {
         if (new_element == current_node->data)
         {
-            return false;
+            return true;
         }
         current_node = current_node->next;
     }
 
-    return true;
+    return false;
 }
 
 void SkipList::print() const
