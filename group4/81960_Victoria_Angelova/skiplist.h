@@ -22,7 +22,8 @@ class SkipList {
     //SkipList (const SkipList&);
     ~SkipList ();
 
-    Node* isMember (const int& _data);
+    Node* locate (const int& _data);
+    bool isMember (const int& _data);
 
     void optimise ();
 

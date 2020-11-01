@@ -4,42 +4,38 @@
 
 void SkipList::destroy () {
     size = 0;
-    Node *crr = start;
-    while (crr != nullptr)
+    while (start)
     {
-        Node *save = crr->next;
-        delete crr;
-        crr = save;
+        Node* save = start;
+        start = start->next;
+        delete save;
     }
-    start = nullptr;
-    last = nullptr;
 }
 
 SkipList::~SkipList () { 
     destroy ();
 }
 
-SkipList::Node* SkipList::isMember (const int &_data) {
+SkipList::Node* SkipList::locate (const int &_data) {
     Node *current = start;
-    bool isMember = false;
-    if (start == nullptr || start->data >= _data) {
+
+    if (start == nullptr || start->data > _data) {
         return nullptr;
     }
-    if (last->data <= _data) {
-        return last;
+
+    while (current->forward != nullptr && current->forward->data <= _data) {
+        current = current->forward;
     }
-    while (isMember == false && current != nullptr) {
-        if (current->data < _data && current->forward->data > _data) {
-            isMember = true;
-            while (current->next->data <= _data) {
-                current = current->next;
-            }
-        }
-        else if (current->forward != nullptr) {
-            current = current->forward;
-        }
+
+    while (current->next != nullptr && current->next->data <= _data) {
+        current = current->next;
     }
+
     return current;
+}
+
+bool SkipList::isMember (const int& _data) {
+    return locate(_data) != nullptr && locate(_data)->data == _data;
 }
 
 void SkipList::optimise() {
