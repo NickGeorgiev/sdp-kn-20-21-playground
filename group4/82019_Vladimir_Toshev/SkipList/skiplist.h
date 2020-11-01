@@ -171,7 +171,7 @@ public:
 
     bool member(const T &key) const
     {
-        if (!this->size)
+        if (this->size == 0)
         {
             return false;
         }

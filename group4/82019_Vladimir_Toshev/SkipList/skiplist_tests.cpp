@@ -1,5 +1,4 @@
 #include "skiplist.h"
-#include "../../../shared/specs/specHelper.h"
 
 TEST_CASE("SkipList")
 {
