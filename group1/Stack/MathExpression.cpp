@@ -1,43 +1,43 @@
 #include "MathExpression.h"
 
-void MathExpr::parse(const std::string& _expr)
+void MathExpr::parse(const std::string& expr)
 {
-    std::string expr = "(";
-    for(size_t i = 0; i < _expr.size(); ++i)
-    {
-        expr.push_back(_expr[i]);
-    }
-    expr.push_back(')');
-
     for(size_t i = 0; i < expr.size(); ++i)
     {
-        bool make_step = true;
-
-        if(is_operator(expr[i]) && is_operator(symbols.top())){
-            result.push_back(symbols.top());
-            symbols.pop();
-            make_step = false;
-            --i;
-        }
-
-        if((expr[i] == '(' || is_operator(expr[i])) && make_step){
+        if(is_operator(expr[i]) || expr[i] == '(' && i < expr.size() - 1){
             symbols.push(expr[i]);
-            make_step = false;
         }
-
-        if(expr[i] >= '0' && expr[i] <= '9' && make_step) {
+        else if(expr[i] >= '0' && expr[i] <= '9' && i < expr.size() - 1){
             result.push_back(expr[i]);
-            make_step = false;
         }
-
-        if(expr[i] == ')' && make_step){
-            while(symbols.top() != '(' || symbols.empty())
+        else if(expr[i] == ')' && i < expr.size() - 1){
+            while(symbols.top() != '(')
             {
                 result.push_back(symbols.top());
                 symbols.pop();
             }
             symbols.pop();
         }
+        else if(i == expr.size() - 1){
+            if(expr[i] >= '0' && expr[i] <= '9'){
+                result.push_back(expr[i]);
+
+                while(!symbols.empty())
+                {
+                    result.push_back(symbols.top());
+                    symbols.pop();
+                }
+            }
+            if(expr[i] == ')'){
+                while(symbols.top() != '(')
+                {
+                    result.push_back(symbols.top());
+                    symbols.pop();
+                }
+                symbols.pop();
+            }
+        }
+        else return;
     }
 }
 
@@ -56,7 +56,7 @@ double MathExpr::solve()
 
             double temp = numbers.top();
             numbers.pop();
-            temp = operate(numbers.top(), temp, result[i]);
+            temp = operate(temp, numbers.top(), result[i]);
             numbers.pop();
 
             numbers.push(temp);
@@ -81,4 +81,9 @@ double MathExpr::operate(const int& a, const int& b, const char& c) const
     if(c == '/') return a / b;
 
     throw "Wrong operator\n";
+}
+
+std::vector<char> MathExpr::get_result() const
+{
+    return result;
 }

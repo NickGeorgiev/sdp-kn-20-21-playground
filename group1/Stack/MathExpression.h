@@ -17,6 +17,8 @@ private:
 public:
     void parse(const std::string&);
     double solve();
+
+    std::vector<char> get_result() const;
 };
 
 
