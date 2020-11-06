@@ -2,6 +2,7 @@
 #include<iostream>
 #include<cassert>
 #include<cmath>
+#include<exception>
 
 bool PostFix::isDigit(char x)
 {
@@ -21,15 +22,46 @@ int PostFix::priorityOperator(char x)
     else return 0;
 }
 
+bool PostFix::isOpeningBracket(char x)
+{
+    return x == '(';
+}
+
+bool PostFix::isMixedOpeningBracket(char x)
+{
+    return x == '(' || x == '[' || x == '{';
+}
+
+bool PostFix::isMixedClosingBracket(char x)
+{
+    return x == ')' || x == ']' || x == '}';
+}
+
+bool PostFix::isClosingBracket(char x)
+{
+    return x == ')';
+}
+
+char PostFix::brackets(char x)
+{
+    switch(x)
+    {
+        case ')':return '(';
+        case ']':return '[';
+        case '}':return '{';
+        default:throw std::runtime_error("Invalid symbol");
+    }
+}
+
 PostFix::PostFix(std::string expresion):expresion(expresion){}
 
 //ex.18.2
 bool PostFix::correctBracket() 
 {
-    for(size_t i = 0; i < expresion.size(); i++)
+    for(char element: expresion)
     {
-        if(expresion[i] == '(') sym.push(expresion[i]);
-        else if(expresion[i] == ')')
+        if(isOpeningBracket(element)) sym.push(element);
+        else if(isClosingBracket(element))
         {
             if(sym.empty()) 
             {
@@ -38,43 +70,45 @@ bool PostFix::correctBracket()
             sym.pop();
         }
     }
-    if(sym.empty()) return true;
-    return false;
+   return sym.empty();
 }
 
 //ex.18.3
 bool PostFix::advancedCorrect()
 {
-    for(size_t i = 0; i < expresion.size(); i++)
+    for(char element: expresion)
     {
-        if(expresion[i] == '(' || expresion[i] == '[' || expresion[i] == '{' ) sym.push(expresion[i]);
-        else if(expresion[i] == ')')
+        if(isMixedOpeningBracket(element)) 
         {
-            if(sym.empty() || sym.top() != '(') return false;
-            sym.pop();
+            sym.push(element);
         }
-         else if(expresion[i] == ']')
+        else
         {
-            if(sym.empty() || sym.top() != '[') return false;
-            sym.pop();
-        }
-         else if(expresion[i] == '}')
-        {
-            if(sym.empty() || sym.top() != '{') return false;
+            try
+            {
+                if(sym.empty() || sym.top() != brackets(element)) 
+                {
+                    return false;
+                }
+            }catch(std::runtime_error e)
+            {
+                std::cout<< e.what();
+                return false;
+            }
             sym.pop();
         }
     }
-    if(sym.empty()) return true;
-    return false;
+    return sym.empty();
 }
 
 bool PostFix::correct()
 {
     if(correctBracket())
     {
-        for(size_t i = 0; i < expresion.size(); i++)
+        for(char element: expresion)
         {
-            if(!(isDigit(expresion[i]) || isOperator(expresion[i]) || expresion[i] == '(' || expresion[i] == ')')) return false;
+            if(!(isDigit(element) || isOperator(element)
+            || isOpeningBracket(element) || isClosingBracket(element))) return false;
         }
         return true;
     }
@@ -84,28 +118,27 @@ bool PostFix::correct()
 void PostFix::make()
 {
     assert(correct());
-    for(size_t i = 0; i < expresion.size(); i++)
+    for(char element: expresion)
     {
-        if(isDigit(expresion[i])) num.push_back(expresion[i]);
-        else if(expresion[i] == '(') sym.push(expresion[i]);
-        else if(isOperator(expresion[i]))
+        if(isDigit(element)) num.push_back(element);
+        else if(isOpeningBracket(element)) sym.push(element);
+        else if(isOperator(element))
         {
-            while(!sym.empty() && priorityOperator(sym.top()) >= priorityOperator(expresion[i]))
+            while(!sym.empty() && priorityOperator(sym.top()) >= priorityOperator(element))
             {
                 num.push_back(sym.top());
                 sym.pop();
             }
-            sym.push(expresion[i]);
+            sym.push(element);
         }
-        else if(expresion[i] == ')')
+        else if(isClosingBracket(element))
         {
-            while(!sym.empty() && sym.top() != '(')
+            while(!sym.empty() && !isClosingBracket(element))
             {
-                num.push_back(sym.top());
-                
+                num.push_back(sym.top());                
                 sym.pop();
             }
-            if(sym.top() == '(') sym.pop();
+            if(isClosingBracket(sym.top())) sym.pop();
         }
     }
     while(!sym.empty())
@@ -113,9 +146,9 @@ void PostFix::make()
         num.push_back(sym.top());
         sym.pop();
     }
-    for(size_t i=0;i<num.size();i++)
+    for(char i:num)
     {
-        std::cout<<num[i];
+        std::cout<<i;
     }
     std::cout<<"--->";    
 }
@@ -123,33 +156,33 @@ void PostFix::make()
 int PostFix::calculating()
 {
     make();
-    for(size_t i = 0; i < num.size(); i++)
+    for(char i: num)
     {
-        if(isDigit(num[i]))
+        if(isDigit(i))
         {
-            sym.push(num[i]);
+            sym.push(i);
         }
-        else if(isOperator(num[i]))
+        else if(isOperator(i))
         {
             int helper = sym.top() - '0';
             sym.pop();
-            if(num[i] == '*')
+            if(i == '*')
             {
                 helper *= (sym.top() - '0');
             }
-            else if(num[i] == '/')
+            else if(i == '/')
             {
                 helper = (sym.top() - '0') / helper;
             }
-            else if(num[i] == '+')
+            else if(i == '+')
             {
                 helper += (sym.top() - '0');
             }
-            else if(num[i] == '-')
+            else if(i == '-')
             {
                 helper = (sym.top() - '0') - helper;
             }
-            else if(num[i] == '^')
+            else if(i == '^')
             {
                 helper = pow((sym.top() - '0'), helper);
             }

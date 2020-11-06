@@ -15,6 +15,11 @@ class PostFix
     static bool isDigit(char x);
     static bool isOperator(char x);
     static int priorityOperator(char x);
+    static bool isOpeningBracket(char x);
+    static bool isMixedOpeningBracket(char x);
+    static bool isMixedClosingBracket(char x);
+    static bool isClosingBracket(char x);
+    static char brackets(char x);
 
     public:
     PostFix(std::string expresion);
