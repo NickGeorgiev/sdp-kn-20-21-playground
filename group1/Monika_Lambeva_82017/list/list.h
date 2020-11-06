@@ -16,6 +16,7 @@ class List
 {
 private:
 Box* first;
+Box* last;
 
 public:
 List();

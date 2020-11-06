@@ -17,7 +17,7 @@ DList l;
     list += 1;
 
 //l.append(list);
-//std::cout << l << std::endl;
+std::cout << l << std::endl;
 //box* newBox = new box(1);
 //std::cout << l.count(newBox,3) << std::endl;
 //DList helper;
@@ -30,10 +30,10 @@ DList l;
 //l.removeAll(5);
 //std::cout<<l<<std::endl;
 //l.pop();
-
+l.push_back(4);
 std::cout << l << " " << list << std::endl;
-l.mergeWithSorted(list);
-std::cout<<l;
+//l.mergeWithSorted(list);
+//std::cout<<l;
 
 return 0;
 }
