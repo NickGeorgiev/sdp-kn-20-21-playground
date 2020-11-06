@@ -1,5 +1,3 @@
-//#define DOCTEST_CONFIG_IMPLEMENT
-//#include"../../../shared/specs/doctest.h"
 #include"shared/specs/specHelper.h"
 #include "postFix.h"
 

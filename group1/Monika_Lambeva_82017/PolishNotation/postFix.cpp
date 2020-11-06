@@ -76,29 +76,30 @@ bool PostFix::correctBracket()
 //ex.18.3
 bool PostFix::advancedCorrect()
 {
-    for(char element: expresion)
+    try
     {
-        if(isMixedOpeningBracket(element)) 
+        for(char element: expresion)
         {
-            sym.push(element);
-        }
-        else
-        {
-            try
+            if(isMixedOpeningBracket(element)) 
+            {
+                sym.push(element);
+            }
+            else if(isMixedClosingBracket(element))
             {
                 if(sym.empty() || sym.top() != brackets(element)) 
                 {
                     return false;
-                }
-            }catch(std::runtime_error e)
-            {
-                std::cout<< e.what();
-                return false;
+                }            
+                sym.pop();
             }
-            sym.pop();
         }
+        return sym.empty();
     }
-    return sym.empty();
+    catch(std::runtime_error e)
+    {
+        std::cout<< e.what();
+        return false;
+    } 
 }
 
 bool PostFix::correct()
