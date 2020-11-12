@@ -23,11 +23,9 @@ void RPN::convert()
                     output.push_back(s.top());
                     s.pop();
                 }
-                s.push(input[i]);
             }
-            else{
-                s.push(input[i]);
-            }
+            
+             s.push(input[i]);
         }
         else if (input[i] == ')')
         {
