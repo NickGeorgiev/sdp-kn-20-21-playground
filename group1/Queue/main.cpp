@@ -1,27 +1,48 @@
 #include "stackQueue.h"
+#include <queue>
+#include <utility>
 
 
 int main()
 {
-    StackQueue<int> q;
+     int type, x;
+    StackQueue<int> q1;
+    std::queue<std::pair<int, int>> memory;
 
-    q.push_back(1);
-    q.push_back(2);
-    q.push_back(3);
-    q.push_back(4);
-    q.push_back(5);
-    q.push_back(6);
+    std::pair<int, int> el;
+    do
+    {
+        std::cin >> type;
+        x = 0;
+        if(type==1)
+        {
+            std::cin>>x;
+        }
+        el = std::make_pair(type, x);
+        memory.push(el);
+    } while (el.first != 0);
 
-    std::cout << q.front() << std::endl << q.back() << std::endl;
-    std::cout << q.size() << std::endl;
-    std::cout << q.empty()<< std::endl;
-
-    q.pop_front();
-    q.pop_front();
-
-    std::cout << q.front() << std::endl << q.back() << std::endl;
-    std::cout << q.size() << std::endl;
-    std::cout << q.empty() << std::endl;
+    while (!memory.empty())
+    {
+        switch (memory.front().first)
+        {
+        case 0:
+            break;
+        case 1:
+            q1.push_back(memory.front().second);
+            break;
+        case 2:
+            q1.pop_front();
+            break;
+        case 3:
+            std::cout << q1.front() << " ";
+            break;
+        default:
+            std::cout << "Error\n";
+            break;
+        }
+        memory.pop();
+    }
 
 
     return 0;
