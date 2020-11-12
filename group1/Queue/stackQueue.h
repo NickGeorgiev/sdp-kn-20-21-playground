@@ -12,6 +12,7 @@ private:
 public:
     void push_back(const T& x);
     void pop_front();
+    void print_front();
 
     T front();
     T back();
@@ -44,6 +45,23 @@ void StackQueue<T>::pop_front()
 
     popStack.pop();
 }
+
+template<class T>
+void StackQueue<T>::print_front()
+{
+    if(size() == 0) return;
+
+    if(popStack.empty())
+    {
+        while(!pushStack.empty())
+        {
+            popStack.push(pushStack.top());
+            pushStack.pop();
+        }
+    }
+
+    std::cout << popStack.top() << " ";
+} 
 
 template<class T>
 T StackQueue<T>::front()
