@@ -5,7 +5,8 @@
 #include <vector>
 #include <stack>
 #include <assert.h>
-#include <math.h>
+#include <functional>
+#include "../Stack/Stack.h"
 #include "../../../shared/specs/doctest.h"
 
 //Convert infix expression to
@@ -14,7 +15,7 @@
 
 bool isOperand(const char c)
 {
-    return c - '0' >= 0 && c - '9' <= 9;
+    return c >= '0' && c <= '9';
 }
 
 bool isOperator(const char c)
@@ -24,14 +25,27 @@ bool isOperator(const char c)
 
 size_t priority(const char c)
 {
-    if (c == '+' || c == '-')
-        return 1;
-    if (c == '*' || c == '/')
-        return 2;
-    if (c == '^')
-        return 3;
-
-    return 0;
+    switch(c)
+    {
+        case '+':
+            return 1;
+            break;
+        case '-':
+            return 1;
+            break;
+        case '*':
+            return 2;
+            break;
+        case '/':
+            return 2;
+            break;
+        case '^':
+            return 3;
+            break;
+        default:
+            return 0;
+            break;
+    }
 }
 
 bool isExpectedSymbol(const char c)
@@ -41,9 +55,10 @@ bool isExpectedSymbol(const char c)
 
 bool isValidExpression(const std ::string &expression)
 {
-    std::stack<char> parentheses;
+    Stack<char> parentheses;
 
-    for (size_t i = 0; i < expression.size(); i++)
+    
+    /*for (size_t i = 0; i < expression.size(); i++)
     {
         if (!isExpectedSymbol(expression[i]))
             return false;
@@ -66,8 +81,40 @@ bool isValidExpression(const std ::string &expression)
         {
             return false;
         }
-    }
+    }*/
+    
+    size_t i = 0;
+    for (char c: expression)
+    {
+        if (!isExpectedSymbol(c))
+        {
+            return false;
+        }
 
+        if (isOperator(c))
+        {
+            if (&c == &*expression.begin() || &c == &expression.back() || isOperator(expression[i + 1]))
+            {
+                return false;
+            }
+        }
+
+        if (c == '(')
+        {
+            parentheses.push(c);
+        }
+        else if (c == ')' && !parentheses.empty())
+        {
+            parentheses.pop();
+        }
+        else if (c == ')' && parentheses.empty())
+        {
+            return false;
+        }
+        
+        i++;
+    }
+    
     if (!parentheses.empty())
         return false;
 
@@ -78,29 +125,29 @@ std::string convertExpression(const std ::string &expression)
 {
     assert(isValidExpression(expression));
 
-    std::stack<char> operators;
+    Stack<char> operators;
     std::string postfix;
 
-    for (size_t i = 0; i < expression.size(); i++)
+    for (char c: expression)
     {
-        if (isOperand(expression[i]))
+        if (isOperand(c))
         {
-            postfix.push_back(expression[i]);
+            postfix.push_back(c);
         }
-        else if (expression[i] == '(')
+        else if (c == '(')
         {
-            operators.push(expression[i]);
+            operators.push(c);
         }
-        else if (isOperator(expression[i]))
+        else if (isOperator(c))
         {
-            while (!operators.empty() && priority(operators.top()) >= priority(expression[i]))
+            while (!operators.empty() && priority(operators.top()) >= priority(c))
             {
                 postfix.push_back(operators.top());
                 operators.pop();
             }
-            operators.push(expression[i]);
+            operators.push(c);
         }
-        else if (expression[i] == ')')
+        else if (c == ')')
         {
             while (operators.top() != '(')
             {
@@ -120,83 +167,72 @@ std::string convertExpression(const std ::string &expression)
     return postfix;
 }
 
+void func(Stack<int>& numbers, std::function<int(int, int)> operation)
+{
+    int b = numbers.top();
+    numbers.pop();
+    int a = numbers.top();
+    numbers.pop();
+    numbers.push(operation(a, b));
+}
+
+int intPow(int a, int b)
+{
+    if (b == 0)
+    {
+        return 1; 
+    }
+    else if (b < 1)
+    {
+        return 0;
+    }
+    else
+    {
+        return a * intPow(a, b - 1);
+    }
+}
+
+std::function<int(int, int)> power = intPow;
+
+void operate(Stack<int>& numbers, char op)
+{
+    switch(op)
+    {
+        case '+':
+            func(numbers, [](int a, int b)->int{ return a + b;});
+            break;
+        case '-':
+            func(numbers, [](int a, int b)->int{ return a - b;});
+            break;
+        case '*':
+            func(numbers, [](int a, int b)->int{ return a * b;});
+            break;
+        case '/':
+            func(numbers, [](int a, int b)->int{ return a / b;});
+            break;
+        case '^':
+            func(numbers, power);
+            break;
+    }
+}
+
 int calculateRPN(const std::string &expression)
 {
-    std::stack<int> numbers;
+    Stack<int> numbers;
 
-    for (size_t i = 0; i < expression.size(); i++)
+    for (char c: expression)
     {
         int result;
 
-        if (isOperand(expression[i]))
+        if (isOperand(c))
         {
-            numbers.push(expression[i] - '0');
+            numbers.push(c - '0');
         }
-        else if (expression[i] == '+')
+        else
         {
-            int b = numbers.top();
-            numbers.pop();
-            int a = numbers.top();
-            numbers.pop();
-            numbers.push(a + b);
-        }
-        else if (expression[i] == '-')
-        {
-            int b = numbers.top();
-            numbers.pop();
-            int a = numbers.top();
-            numbers.pop();
-            numbers.push(a - b);
-        }
-        else if (expression[i] == '*')
-        {
-            int b = numbers.top();
-            numbers.pop();
-            int a = numbers.top();
-            numbers.pop();
-            numbers.push(a * b);
-        }
-        else if (expression[i] == '/')
-        {
-            int b = numbers.top();
-            numbers.pop();
-            int a = numbers.top();
-            numbers.pop();
-            numbers.push(a / b);
-        }
-        else if (expression[i] == '^')
-        {
-            int b = numbers.top();
-            numbers.pop();
-            int a = numbers.top();
-            numbers.pop();
-            numbers.push(pow(a, b));
+            operate(numbers, c);
         }
     }
 
     return numbers.top();;
-}
-
-
-TEST_CASE("Conversion test")
-{
-    CHECK(convertExpression("2^3") == "23^");
-    CHECK(convertExpression("5+7+1+2") == "57+1+2+");
-    CHECK(convertExpression("(5+(7+(1+2)))") == "5712+++");
-    CHECK(convertExpression("((1+2)*3/(1+2))") == "12+3*12+/");
-}
-
-TEST_CASE("Calculation test")
-{
-    CHECK(calculateRPN(convertExpression("2^3")) == 8);
-    CHECK(calculateRPN(convertExpression("5+7+1+2")) == 15);
-    CHECK(calculateRPN(convertExpression("(5+(7+(1+2)))")) == 15);
-    CHECK(calculateRPN(convertExpression("((1+2)*3/(1+2))")) == 3);
-}
-
-int main()
-{
-    doctest::Context().run(); 
-
-    return 0;
 }
