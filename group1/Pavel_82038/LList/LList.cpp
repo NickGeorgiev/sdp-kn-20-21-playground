@@ -1,13 +1,9 @@
 #include "LList.h"
 
-#include <assert.h>
+#include <exception>
 
 template<class T>
-LList<T>::LList()
-{
-	first = nullptr;
-	last = nullptr;
-}
+LList<T>::LList(): first(nullptr), last(nullptr), length(0) {}
 
 template<class T>
 LList<T>::LList(const LList& other)
@@ -24,44 +20,62 @@ LList<T>::~LList()
 template<class T>
 typename LList<T>::Node* LList<T>::at(size_t position)
 {
-	assert(first != nullptr);
-
-	Node* current = first;
-
-	while (position > 0 && current != nullptr)
+	try
 	{
-		current = current->next;
-		position--;
+		if(first)
+		{
+			Node* current = first;
+
+			while (position > 0 && current)
+			{
+				current = current->next;
+				position--;
+			}
+
+			if (!current)
+			{
+				throw std::runtime_error("Out of bounds!");
+			}
+
+			return current;
+		}
+		else
+		{
+			throw std::runtime_error("Empty list!");
+		}
 	}
-
-	assert(current != nullptr);
-
-	return current;
+	catch(const std::runtime_error& e)
+	{
+		std::cerr << e.what() << '\n';
+	}	
 }
 
 template<class T>
-size_t LList<T>::size()
+const size_t LList<T>::size()
 {
-	size_t counter = 0;
-	Node* current = first;
+	return length;
 
-	while (current != nullptr)
-	{
-		current = current->next;
-		counter++;
-	}
-
-	return counter;
+	//size_t counter = 0;
+	//Node* current = first;
+	//
+	//while (current != nullptr)
+	//{
+	//	current = current->next;
+	//	counter++;
+	//}
+	//
+	//return counter;
 }
 
 template<class T>
 void LList<T>::push_front(const T& x)
 {
 	first = new Node<T>(x, first);
-	if (last == nullptr)
+	if (!last)
 	{
 		last = first;
 	}
+	length++;
 }
 
 template<class T>
@@ -69,7 +83,6 @@ void LList<T>::pop_front()
 {
 	if (first != nullptr)
 	{
-		
 		Node* tmp = first;
 		first = first->next;
 		delete tmp;
@@ -77,6 +90,7 @@ void LList<T>::pop_front()
 		{
 			last = nullptr;
 		}
+		length--;
 	}
 }
 
@@ -90,23 +104,33 @@ void LList<T>::insertAfter(const T& x, size_t position)
 	{
 		last = last->next;
 	}
+	length++;
 }
 
 template<class T>
 void LList<T>::deleteAfter(size_t position)
 {
 	Node* prev = at(position);
-    if (prev->next == nullptr) return;
-	
-    Node* save = prev->next;
-	prev->next = prev->next->next;
-
-	if (save == last)
+    if (prev->next == nullptr) 
 	{
-		last = prev;
+		return;
 	}
 
-	delete save;
+    Node* toDelete = prev->next;
+
+	if (toDelete == last)
+	{
+		prev->next = nullptr;
+		last = prev;
+	}
+	else
+	{
+		prev->next = prev->next->next;
+	}
+
+	length--;
+
+	delete toDelete;
 }
 
 template<class T>
@@ -118,15 +142,24 @@ void LList<T>::push_back(const T& x)
 		return;
 	}
 	last = last->next = new Node(x, nullptr);
+	length++;
+}
+
+template<class T>
+void LList<T>::pop_back()
+{
+	if (last == first)
+	{
+		pop_front(x);
+		return;
+	}
+
+	deleteAfter(length-1);
 }
 
 template<class T>
 void LList<T>::copy(const LList& other)
-{
-    if (this = *other) return;
-
-    clear();
-    
+{   
     Node* current = other->first;
 
     while (current != nullptr)
@@ -134,6 +167,8 @@ void LList<T>::copy(const LList& other)
         push_back(current->data);
         current = current->next;
     }
+
+	length = other.length;
 }
 
 template<class T>
@@ -165,11 +200,39 @@ T LList<T>::operator[] (size_t position) const
 template<class T>
 LList<T>& LList<T>::operator= (const LList& other)
 {
+	if (this = *other) 
+	{
+		return;
+	}
+
+    clear();
+
     copy(other);
 }
 
 template<class T>
 void LList<T>::print() const
 {
-    
+    Node* current = first;
+	while(current)
+	{
+		current->print();
+		current = current->next;
+	}
+}
+
+template<class T>
+void LList<T>::reverse()
+{
+	Node* current = first, previous = nullptr, next = nullptr;
+
+	while(current != nullptr)
+	{
+		next = current->next;
+		current->next = previous;
+		previous = current;
+		current = next;
+	}
+
+	first = previous;
 }
