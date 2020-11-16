@@ -2,29 +2,38 @@
 #define LLIST_H
 
 #include <iostream>
+#include <assert.h>
 
 template <class T>
 class LList
 {
-private:
+protected:
     struct Node
     {
         T data;
         Node* next;
 
         Node(const T& _data, Node* _next) : data(_data), next(_next) {}
+
+        void print() const
+        {
+            std::cout << data;
+        }
     };
 
     Node *first, *last;
-
+    size_t length;
+    
     Node* at(size_t);
+
+    void copy(const LList&);
 
 public:
     LList();
     LList(const LList&);
     ~LList();
 
-    size_t size();
+    const size_t size();
 
     void push_front(const T&);
 	void pop_front();
@@ -33,8 +42,8 @@ public:
 	void deleteAfter(size_t);
 
 	void push_back(const T&);
+    void pop_back();
 
-    void copy(const LList&);
     void clear();
 
 	T& operator [] (const size_t);
@@ -43,24 +52,15 @@ public:
     LList& operator=(const LList&);
 
     void print() const;
+
+    void reverse();
 };
 
 /*
-box* locate(size_t index);
+methods to add:
 
 void insertAt(const int& other, size_t index);
 void deleteAt(size_t index);
-
-int count(int x);
-
-void operator+=(const int& other);
-int get_ith(int n);
-void removeAll(int x);
-void append(const List& list2);
-List concat(const List& other);
-void operator+=(const List& other);
-List operator+(const List& other);
-void reverse();
 */
 
 
