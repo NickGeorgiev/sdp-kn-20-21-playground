@@ -2,7 +2,6 @@
 #define LLIST_H
 
 #include <iostream>
-#include <assert.h>
 
 template <class T>
 class LList
