@@ -42,6 +42,7 @@ typename LList<T>::Node* LList<T>::at(size_t position)
 		else
 		{
 			throw std::runtime_error("Empty list!");
+			return nullptr;
 		}
 	}
 	catch(const std::runtime_error& e)
