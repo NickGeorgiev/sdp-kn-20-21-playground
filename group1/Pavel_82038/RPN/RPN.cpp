@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <assert.h>
 #include <functional>
 #include "../Stack/Stack.h"
 #include "../../../shared/specs/doctest.h"
@@ -122,48 +121,54 @@ bool isValidExpression(const std ::string &expression)
 
 std::string convertExpression(const std ::string &expression)
 {
-    assert(isValidExpression(expression));
-
-    Stack<char> operators;
-    std::string postfix;
-
-    for (char c: expression)
+    if(isValidExpression(expression))
     {
-        if (isOperand(c))
+        Stack<char> operators;
+        std::string postfix;
+
+        for (char c: expression)
         {
-            postfix.push_back(c);
-        }
-        else if (c == '(')
-        {
-            operators.push(c);
-        }
-        else if (isOperator(c))
-        {
-            while (!operators.empty() && priority(operators.top()) >= priority(c))
+            if (isOperand(c))
             {
-                postfix.push_back(operators.top());
+                postfix.push_back(c);
+            }
+            else if (c == '(')
+            {
+                operators.push(c);
+            }
+            else if (isOperator(c))
+            {
+                while (!operators.empty() && priority(operators.top()) >= priority(c))
+                {
+                    postfix.push_back(operators.top());
+                    operators.pop();
+                }
+                operators.push(c);
+            }
+            else if (c == ')')
+            {
+                while (operators.top() != '(')
+                {
+                    postfix.push_back(operators.top());
+                    operators.pop();
+                }
                 operators.pop();
             }
-            operators.push(c);
         }
-        else if (c == ')')
+
+        while (!operators.empty())
         {
-            while (operators.top() != '(')
-            {
-                postfix.push_back(operators.top());
-                operators.pop();
-            }
+            postfix.push_back(operators.top());
             operators.pop();
         }
-    }
 
-    while (!operators.empty())
+        return postfix;
+    }
+    else
     {
-        postfix.push_back(operators.top());
-        operators.pop();
+        throw std::runtime_error("Invalid expression");
+        return "Invalid expression";
     }
-
-    return postfix;
 }
 
 void func(Stack<int>& numbers, std::function<int(int, int)> operation)
@@ -217,21 +222,27 @@ void operate(Stack<int>& numbers, char op)
 
 int calculateRPN(const std::string &expression)
 {
-    Stack<int> numbers;
-
-    for (char c: expression)
+    try{}
+    catch(const std::runtime_error& e)
     {
-        int result;
-
-        if (isOperand(c))
-        {
-            numbers.push(c - '0');
-        }
-        else
-        {
-            operate(numbers, c);
-        }
+        std::cerr << e.what() << '\n';
     }
 
-    return numbers.top();;
+    Stack<int> numbers;
+
+        for (char c: expression)
+        {
+            int result;
+
+            if (isOperand(c))
+            {
+                numbers.push(c - '0');
+            }
+            else
+            {
+                operate(numbers, c);
+            }
+        }
+
+        return numbers.top();;
 }

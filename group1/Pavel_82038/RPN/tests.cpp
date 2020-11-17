@@ -20,7 +20,7 @@ TEST_CASE("Calculation test")
 
 int main()
 {
-    doctest::Context().run(); 
+    doctest::Context().run();
 
     return 0;
 }
