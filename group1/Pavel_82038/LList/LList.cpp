@@ -52,6 +52,20 @@ typename LList<T>::Node* LList<T>::at(size_t position)
 }
 
 template<class T>
+void LList<T>::copy(const LList& other)
+{   
+    Node* current = other->first;
+
+    while (current)
+    {
+        push_back(current->data);
+        current = current->next;
+    }
+
+	length = other.length;
+}
+
+template<class T>
 const size_t LList<T>::size()
 {
 	return length;
@@ -82,12 +96,12 @@ void LList<T>::push_front(const T& x)
 template<class T>
 void LList<T>::pop_front()
 {
-	if (first != nullptr)
+	if (first)
 	{
 		Node* tmp = first;
 		first = first->next;
 		delete tmp;
-		if (first == nullptr)
+		if (!first)
 		{
 			last = nullptr;
 		}
@@ -159,25 +173,11 @@ void LList<T>::pop_back()
 }
 
 template<class T>
-void LList<T>::copy(const LList& other)
-{   
-    Node* current = other->first;
-
-    while (current != nullptr)
-    {
-        push_back(current->data);
-        current = current->next;
-    }
-
-	length = other.length;
-}
-
-template<class T>
 void LList<T>::clear()
 {
     Node* current = first;
 
-    while(current != nullptr)
+    while(current)
     {
         current = current->next;
         delete first;
@@ -201,7 +201,7 @@ T LList<T>::operator[] (size_t position) const
 template<class T>
 LList<T>& LList<T>::operator= (const LList& other)
 {
-	if (this = *other) 
+	if(this == *other) 
 	{
 		return;
 	}
@@ -218,6 +218,7 @@ void LList<T>::print() const
 	while(current)
 	{
 		current->print();
+        std::cout << ' ';
 		current = current->next;
 	}
 }
@@ -227,7 +228,7 @@ void LList<T>::reverse()
 {
 	Node* current = first, previous = nullptr, next = nullptr;
 
-	while(current != nullptr)
+	while(current)
 	{
 		next = current->next;
 		current->next = previous;
