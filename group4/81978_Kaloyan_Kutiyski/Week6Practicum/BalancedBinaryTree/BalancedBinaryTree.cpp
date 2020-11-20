@@ -6,7 +6,7 @@ void BalancedBinaryTree<T>::load(const ListOrderable<T>& list) {
     if (!empty()) {
         destroy(root);
     }
-    ListOrderable<T>* orderedList = new ListOrderable<T>([](const T& l, const T& r) -> bool { return l < r; });
+    ListOrderable<T>* orderedList = new ListOrderable<T>(increasingOrder);
     orderedList->copyInOrder(list);
     root = new Node<T>;
     loadHelper(root, *orderedList, 0, list.getSize() - 1);
@@ -27,7 +27,7 @@ void BalancedBinaryTree<T>::loadHelper(Node<T>*& node, const ListOrderable<T>& l
         node->left = new Node<T>(list[leftIndex]);
         return;
     }
-    // general case: node has two children which are may or may not be leaves 
+    // general case: node has two children which may or may not be leaves 
     int mid = (leftIndex + rightIndex) / 2;
     node->val = list[mid];
     node->left = new Node<T>;
@@ -40,6 +40,7 @@ void BalancedBinaryTree<T>::loadHelper(Node<T>*& node, const ListOrderable<T>& l
 template<class T>
 void BalancedBinaryTree<T>::print()const {
     if (!empty()) {
+        std::cout << "is balanced: " << std::boolalpha <<  isBalanced() << '\n';
         printHelper(root);
     }
 }
@@ -94,7 +95,7 @@ void BalancedBinaryTree<T>::destroy(Node<T>*& node) {
 
 template<class T>
 bool BalancedBinaryTree<T>::empty()const {
-    return root == nullptr;
+    return !(bool)root;
 }
 
 template<class T>
@@ -126,6 +127,12 @@ template<class T>
 bool BalancedBinaryTree<T>::balancedHelper(const Node<T>* node)const {
     if (!node) {
         return true;
+    }
+    // check for propper order in node
+    if (node->left && !increasingOrder(node->left->val, node->val)
+        || node->right && !increasingOrder(node->val, node->right->val)) {
+            
+        return false;
     }
 
     int diff = countSize(node->left) - countSize(node->right);

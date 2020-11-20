@@ -16,6 +16,7 @@ class BalancedBinaryTree {
     };
 
     Node<T>* root;
+    std::function<bool(const T& l, const T& r)> increasingOrder = [](const T& l, const T& r) -> bool { return l <= r; };
 
     void destroy(Node<T>*&);
     void loadHelper(Node<T>*&, const ListOrderable<T>&, const std::size_t&, const std::size_t&);

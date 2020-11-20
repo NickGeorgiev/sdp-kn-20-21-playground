@@ -20,9 +20,7 @@ int main() {
 
     list.print();
     BalancedBinaryTree<int> bbTree;
-    std::cout << std::boolalpha << bbTree.isBalanced() << '\n';
     bbTree.load(list);
-    std::cout << std::boolalpha << bbTree.isBalanced() << '\n';
     bbTree.print();
 
     ListOrderable<int> otherList;
@@ -58,7 +56,6 @@ int main() {
 
     otherList.print();
     bbTree.load(otherList);
-    std::cout << std::boolalpha << bbTree.isBalanced() << '\n';
     bbTree.print();
 
     ListOrderable<int> anotherList;
@@ -81,7 +78,6 @@ int main() {
 
     anotherList.print();
     bbTree.load(anotherList);
-    std::cout << std::boolalpha << bbTree.isBalanced() << '\n';
     bbTree.print();
 
 

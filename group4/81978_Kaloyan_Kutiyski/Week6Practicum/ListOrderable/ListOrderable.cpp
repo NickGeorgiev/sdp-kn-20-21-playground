@@ -66,7 +66,7 @@ ListOrderable<T>& ListOrderable<T>::operator=(const ListOrderable<T>& other) {
 
 template<class T>
 bool ListOrderable<T>::empty()const {
-    return first == nullptr;
+    return !(bool)first;
 }
 
 template<class T>
