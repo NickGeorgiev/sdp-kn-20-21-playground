@@ -1,7 +1,9 @@
 #ifndef BINTREE_H
 #define BINTREE_H
-#include<cassert>
+#include<iostream>
 #include<fstream>
+#include<functional>
+#include<exception>
 
 template<class T>
 class BinTree
@@ -14,114 +16,156 @@ private:
     };    
     BinTreeNode *root;
 
+    int countHelp(BinTreeNode *curr) const;
+    int searchCountHelp(BinTreeNode *curr, std::function<bool(const T&)> pred);
+    int heightHelp(BinTreeNode *curr) const;
+    void toGvHelp (std::ostream& out, BinTreeNode *curr);
+    BinTreeNode* locate(std::string trace) const;
+
 public:
     BinTree();
 
-    void add(const T& x, const char* trace);
-    BinTreeNode* locate(const char* trace);
-    T get(const char* trace);
+    void add(const T& x, std::string trace);    
+    T get(std::string trace) const;
 
     //ex.19.1
-    int count();
-    int countHelp(BinTreeNode *curr);
+    int count() const;
 
     //ex.19.2
     int countEvens();
-    //int countEvensHelp(BinTreeNode *curr);
 
     //ex.19.3
-    int searchCount(bool(*pred)(const T&));
-    int searchCountHelp(BinTreeNode *curr, bool(*pred)(const T&));
+    int searchCount(std::function<bool(const T&)> pred);
 
     //ex.19.4
-    int height();
-    int heightHelp(BinTreeNode *curr);
+    int height() const;
 
     void toGv(std::ostream& out);
-    void toGvHelp (std::ostream& out, BinTreeNode *curr);
 };
 
 template<class T>
 BinTree<T>::BinTree():root(nullptr){}
 
 template<class T>
-void BinTree<T>::add(const T& x, const char* trace)
+void BinTree<T>::add(const T& x, std::string trace)
 {
-    if(!root)
+    try
     {
-        assert (!trace[0]);
-        root = new BinTree<T>::BinTreeNode{x, nullptr, nullptr};
-        return;
-    }
-    BinTreeNode *curr = root;
-    while(trace[1])
-    {
-        assert(trace[0] == 'L' || trace[0] == 'R');
-        if(trace[0] == 'L')
+        if(!root)
         {
-            curr = curr->left;
+            if(trace.front())
+            {
+                throw std::runtime_error ("Invalid data!");
+            }
+            root = new BinTree<T>::BinTreeNode{x, nullptr, nullptr};
+            return;
+        }
+        BinTreeNode *curr = root;
+        while(trace.size() > 1)
+        {
+            if(trace.front() == 'L')
+            {
+                curr = curr->left;
+            }
+            else if(trace.front() == 'R')
+            {
+                curr = curr->right;
+            }
+            else
+            {
+                throw std::runtime_error ("Invalid data!");
+            }
+            if(!curr)
+            {
+                throw std::runtime_error ("Something wrong with data!");
+            }
+            trace.erase(trace.begin());
+        }
+        if(trace.front() == 'L')
+        {
+            if(curr->left)
+            {
+                throw std::runtime_error ("Something wrong with data! Cannot add element to the left!");
+            }
+            curr->left = new BinTree<T>::BinTreeNode{x,nullptr,nullptr};
+        }
+        else if(trace.front() == 'R')
+        {
+            if(curr->right)
+            {
+                throw std::runtime_error ("Something wrong with data! Cannot add element to the right!");
+            }
+            curr->right = new BinTree<T>::BinTreeNode{x,nullptr,nullptr};
         }
         else
         {
-            curr = curr->right;
-        }
-        assert(curr);
-        trace++;
+            throw std::runtime_error ("Wrong trace!");
+        }  
     }
-    if(trace[0] == 'L')
+    catch(std::runtime_error e)
     {
-        assert(!curr->left);
-        curr->left = new BinTree<T>::BinTreeNode{x,nullptr,nullptr};
-    }
-    else if(trace[0] == 'R')
-    {
-        assert(!curr->right);
-        curr->right = new BinTree<T>::BinTreeNode{x,nullptr,nullptr};
-    }
-    else
-    {
-        assert(false);
-    }  
+        std::cout << e.what() << '\n';
+    }    
 }
 
 template<class T>
-typename BinTree<T>::BinTreeNode* BinTree<T>::locate(const char* trace)
+typename BinTree<T>::BinTreeNode* BinTree<T>::locate(std::string trace) const
 {
-    BinTreeNode* curr = root;
-    while(trace[0])
+    try
     {
-        assert(trace[0] == 'L' || trace[0] == 'R');
-        if(trace[0]=='L')
+        BinTreeNode* curr = root;
+        while(trace.front())
         {
-            curr = curr->left;
+            if(trace.front() == 'L')
+            {
+                curr = curr->left;
+            }
+            else if(trace.front() == 'R')
+            {
+                curr= curr->right;
+            }
+            else
+            {
+                throw std::runtime_error ("Invalid data!");
+            }
+            if(!curr)
+            {
+                throw std::runtime_error ("Something wront with data!");
+            }
+            trace.erase(trace.begin());        
         }
-        else
+        if(!curr)
         {
-            curr= curr->right;
+            throw std::runtime_error ("Something wront with data!");
         }
-        assert(curr);
-        trace++;        
+        return curr;
     }
-    assert(curr);
-    return curr;
+    catch(std::runtime_error e)
+    {
+        std::cout << e.what() << '\n';
+        return nullptr;
+    }   
 }
 
 template<class T>
-T BinTree<T>::get(const char* trace)
+T BinTree<T>::get(std::string trace) const
 {
     BinTreeNode* curr = locate(trace);
-    assert(curr);
+    if(!curr)
+    {
+        throw ("Invalid data!");
+    }
     return curr->data;
 }
 
 template<class T>
-int BinTree<T>::count()
+int BinTree<T>::count() const
 {
    return countHelp(root);
 }
 
 template<class T>
-int BinTree<T>::countHelp(BinTreeNode *curr)
+int BinTree<T>::countHelp(BinTreeNode *curr) const
 {
     if(!curr)
     {
@@ -134,34 +178,16 @@ template<class T>
 int BinTree<T>::countEvens()
 {
     return searchCount([](const int& x){return x % 2 == 0;});
-    //return countEvensHelp(root);
 }
 
-// template<class T>
-// int BinTree<T>::countEvensHelp(BinTreeNode *curr)
-// {
-    //if(!curr)
-    //{
-    //    return 0;
-    //}
-    //else if(curr->data % 2 == 0)
-    //{
-    //    return 1 + countEvensHelp(curr->left) + countEvensHelp(curr->right);
-    //}
-    //else 
-    //{
-    //    return countEvensHelp(curr->left) + countEvensHelp(curr->right);
-    //}
-//}
-
 template<class T>
-int BinTree<T>::searchCount(bool(*pred)(const T&))
+int BinTree<T>::searchCount(std::function<bool(const T&)> pred)
 {
     return searchCountHelp(root, pred);
 }
 
 template<class T>
-int BinTree<T>::searchCountHelp(BinTreeNode *curr, bool(*pred)(const T&))
+int BinTree<T>::searchCountHelp(BinTreeNode *curr, std::function<bool(const T&)> pred)
 {
     if(!curr)
     {
@@ -178,13 +204,13 @@ int BinTree<T>::searchCountHelp(BinTreeNode *curr, bool(*pred)(const T&))
 }
 
 template <class T>
-int BinTree<T>::height()
+int BinTree<T>::height() const
 {
     return heightHelp(root);
 }
 
 template <class T>
-int BinTree<T>::heightHelp(BinTreeNode *curr)
+int BinTree<T>::heightHelp(BinTreeNode *curr) const
 {
     if(!curr)
     {
@@ -194,14 +220,7 @@ int BinTree<T>::heightHelp(BinTreeNode *curr)
     {
         int maxLeft = heightHelp(curr->left);
         int maxRight = heightHelp(curr->right);
-        if(maxLeft > maxRight)
-        {
-            return maxLeft + 1;
-        }
-        else
-        {
-            return maxRight + 1;
-        }
+        return (maxLeft > maxRight ? maxLeft + 1 : maxRight + 1);
     }
 }
 
