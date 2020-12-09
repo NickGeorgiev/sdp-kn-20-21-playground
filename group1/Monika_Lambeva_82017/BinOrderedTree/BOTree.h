@@ -5,57 +5,78 @@
 #include<queue>
 
 template<class T>
-class BOTree {
+class BOTree 
+{
+    private:
 
-private:
+        struct BOTreeNode {
+            T data;
+            BOTreeNode* left;
+            BOTreeNode* right;
+            BOTreeNode(const T& _data):data{_data}, left{nullptr}, right{nullptr} {}
+        };
 
-    struct BOTreeNode {
-        T data;
-        BOTreeNode* left;
-        BOTreeNode* right;
-        BOTreeNode(const T& _data):data{_data}, left{nullptr}, right{nullptr} {}
-    };
+        struct toPrintNode{
+            BOTreeNode* node;
+            bool toPrint;
+        };     
 
-    struct toPrintNode{
-        BOTreeNode* node;
-        bool toPrint;
-    };
-    
-    BOTreeNode* root;
+        BOTreeNode* root;
 
-    void addHelper(const T&, BOTree<T>::BOTreeNode*& curr);
-    bool memberHelper(const T&, const BOTree<T>::BOTreeNode* curr) const;
-    BOTreeNode* findLeftmostInRightSubtree(BOTreeNode* curr);    
-    void removeHelper(const T&, BOTree<T>::BOTreeNode*& curr);
-    void printHelper(const BOTree<T>::BOTreeNode* curr) const;
-    int heightHelper(const BOTree<T>::BOTreeNode* curr) const;
-    void toGvHelp (std::ostream& out, BOTree<T>::BOTreeNode* curr);
-    void dfsHelperRootLeftRight(BOTree<T>::BOTreeNode* curr) const;
-    void dfsHelperRootRightLeft(BOTree<T>::BOTreeNode* curr) const;
-    void dfsHelperLeftRootRight(BOTree<T>::BOTreeNode* curr) const;
-    void dfsHelperRightRootLeft(BOTree<T>::BOTreeNode* curr) const;
-    void dfsHelperLeftRightRoot(BOTree<T>::BOTreeNode* curr) const;
-    void dfsHelperRightLeftRoot(BOTree<T>::BOTreeNode* curr) const;
-    void bfsHelper(BOTree<T>::BOTreeNode* curr) const;
+        void addHelper(const T& x, BOTree<T>::BOTreeNode*& curr);
+        void addWithBalanceHelper(const T& x, BOTree<T>::BOTreeNode*& curr);
+        bool memberHelper(const T& x, const BOTree<T>::BOTreeNode* curr) const;
+        BOTreeNode* findLeftmostInRightSubtree(BOTreeNode* curr);    
+        void removeHelper(const T& x, BOTree<T>::BOTreeNode*& curr);
+        void printHelper(const BOTree<T>::BOTreeNode* curr) const;
+        int heightHelper(const BOTree<T>::BOTreeNode* curr) const;
+        int balance(const BOTree::BOTreeNode* curr) const;
+        void leftRotation(BOTree::BOTreeNode*& curr);
+        void rightRotation(BOTree::BOTreeNode*& curr);
+        void toGvHelp (std::ostream& out, BOTree<T>::BOTreeNode* curr);
+        void dfsHelperRootLeftRight(BOTree<T>::BOTreeNode* curr) const;
+        void dfsHelperRootRightLeft(BOTree<T>::BOTreeNode* curr) const;
+        void dfsHelperLeftRootRight(BOTree<T>::BOTreeNode* curr) const;
+        void dfsHelperRightRootLeft(BOTree<T>::BOTreeNode* curr) const;
+        void dfsHelperLeftRightRoot(BOTree<T>::BOTreeNode* curr) const;
+        void dfsHelperRightLeftRoot(BOTree<T>::BOTreeNode* curr) const;
+        void bfsHelper(BOTree<T>::BOTreeNode* curr) const;
 
-public:
-    BOTree();
-    void add(const T& x);
-    void add_iter(const T& x);
-    bool member(const T& x) const;
-    bool empty() const;
-    void remove(const T& x);
-    void print() const;
-    int height() const;
-    void toGv(std::ostream& out);
+    public:  
+       
+        class Iterator
+        {
+            private:
+                std::stack<toPrintNode> elements;
+                void helper();
+            public:
+                Iterator(BOTree<T>::BOTreeNode *curr);
+                T operator*();
+                bool operator!=(const Iterator& other);
+                Iterator& operator++();
+        };
 
-    void dfsRootLeftRight() const;
-    void dfsRootRightLeft() const;
-    void dfsLeftRootRight() const;
-    void dfsRightRootLeft() const;
-    void dfsLeftRightRoot() const;
-    void dfsRightLeftRoot() const;
-    void bfs() const;
+        BOTree();
+        void add(const T& x);
+        void add_iter(const T& x);
+        void addWithBalance(const T& x);
+        bool member(const T& x) const;
+        bool empty() const;
+        void remove(const T& x);
+        void print() const;
+        int height() const;
+        void toGv(std::ostream& out);
+
+        void dfsRootLeftRight() const;
+        void dfsRootRightLeft() const;
+        void dfsLeftRootRight() const;
+        void dfsRightRootLeft() const;
+        void dfsLeftRightRoot() const;
+        void dfsRightLeftRoot() const;
+        void bfs() const;
+
+        Iterator begin();
+        Iterator end();
 };
 
 template<class T>
@@ -78,6 +99,40 @@ void BOTree<T>::addHelper(const T& x, BOTree<T>::BOTreeNode*& curr)
     {
         throw "Cannot x==curr->data!";
     }        
+}
+
+template<class T>
+void BOTree<T>::addWithBalanceHelper(const T& x, BOTree<T>::BOTreeNode*& curr)
+{
+    if(!curr)
+    {
+        curr = new BOTree<T>::BOTreeNode(x);
+    }
+    else if(x < curr->data)
+    {
+        addWithBalanceHelper(x, curr->left);
+    }
+    else if(x > curr->data)
+    {
+        addWithBalanceHelper(x, curr->right);
+    }
+
+    int rootBalance = balance(curr); 
+
+    if(rootBalance < -1 && x > curr->right->data) {
+        leftRotation(curr);
+    }
+    if(rootBalance < -1 && x < curr->right->data) {
+        rightRotation(curr->right);
+        leftRotation(curr);
+    }
+    if(rootBalance > 1 && x < curr->left->data) {
+        rightRotation(curr);
+    }
+    if(rootBalance > 1 && x > curr->left->data) {
+        leftRotation(curr->left);
+        rightRotation(curr);
+    }
 }
 
 template<class T>
@@ -177,6 +232,34 @@ int BOTree<T>::heightHelper(const BOTree<T>::BOTreeNode* curr) const
     return std::max(heightHelper(curr->left), heightHelper(curr->right)) + 1;
 }
 
+template<class T>
+int BOTree<T>::balance(const BOTree::BOTreeNode* curr) const
+{
+    return heightHelper(curr->left) - heightHelper(curr->right);
+}
+
+template<class T>
+void BOTree<T>::leftRotation(BOTree::BOTreeNode*& curr)
+{
+    BOTreeNode* rightChild = curr->right;
+    BOTreeNode* leftGrandChild = rightChild->left;
+    BOTreeNode* rootCopy = curr;
+    curr = rightChild;
+    curr->left = rootCopy;
+    curr->left->right = leftGrandChild;
+}
+
+template<class T>
+void BOTree<T>::rightRotation(BOTree::BOTreeNode*& curr)
+{
+    BOTreeNode* leftChild = curr->left;
+    BOTreeNode* rightGrandChild = leftChild->right;
+    BOTreeNode* rootCopy = curr;
+    curr = leftChild;
+    curr->right = rootCopy;
+    curr->right->left = rightGrandChild;   
+}
+
 template <class T>
 void BOTree<T>::toGvHelp (std::ostream& out, BOTree<T>::BOTreeNode *curr)
 {
@@ -200,7 +283,6 @@ void BOTree<T>::toGvHelp (std::ostream& out, BOTree<T>::BOTreeNode *curr)
 template<class T>
 void BOTree<T>::dfsHelperRootLeftRight(BOTree<T>::BOTreeNode* curr) const
 {
-    //root->left->right
     if(curr)
     {
         std::stack<BOTreeNode*> stack;
@@ -393,6 +475,62 @@ void BOTree<T>::bfsHelper(BOTree<T>::BOTreeNode* curr) const
 }
 
 template<class T>
+void BOTree<T>::Iterator::helper()
+{
+    while(!elements.empty() && elements.top().node && !elements.top().toPrint)
+    {
+        toPrintNode curr = elements.top();
+        elements.pop();
+        if(curr.node)
+        {
+            if(curr.node->right)
+            {
+                elements.push({curr.node->right, false});
+            }
+            elements.push({curr.node, true});
+            if(curr.node->left)
+            {
+                elements.push({curr.node->left, false});
+            }
+        }
+    }
+}
+      
+template<class T>
+BOTree<T>::Iterator::Iterator(BOTree<T>::BOTreeNode *curr)
+{
+    elements.push({curr, false});
+    helper();
+}
+
+template<class T>
+T BOTree<T>::Iterator::operator*()
+{
+    if(!elements.empty())
+    {
+        return elements.top().node->data;
+    }
+    else
+    {
+        throw std::runtime_error("Empty stack!");
+    }    
+}
+
+template<class T>
+bool BOTree<T>::Iterator::operator!=(const Iterator& other)
+{
+    return elements.top().node != other.elements.top().node;
+}
+
+template<class T>
+typename BOTree<T>::Iterator& BOTree<T>::Iterator::operator++()
+{
+    elements.pop();
+    helper();
+    return *this;
+}
+
+template<class T>
 BOTree<T>::BOTree():root{nullptr} {}
 
 template<class T>
@@ -435,6 +573,12 @@ void BOTree<T>::add_iter(const T& x)
             throw "Cannot add!";
         }
     }    
+}
+
+template<class T>
+void BOTree<T>::addWithBalance(const T& x)
+{
+    addWithBalanceHelper(x, root);
 }
 
 template<class T>
@@ -515,6 +659,18 @@ template <class T>
 void BOTree<T>::bfs() const
 {
     bfsHelper(root);
+}
+
+template <class T>
+typename BOTree<T>::Iterator BOTree<T>::begin()
+{
+    return Iterator(root);
+}
+
+template <class T>
+typename BOTree<T>::Iterator BOTree<T>::end()
+{
+    return Iterator(nullptr);
 }
 
 #endif

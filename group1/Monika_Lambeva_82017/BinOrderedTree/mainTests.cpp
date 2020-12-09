@@ -120,7 +120,7 @@ TEST_CASE("Print")
     CHECK(first.height() == 3); 
 }
 
-TEST_CASE("DFS RootLeftRight")
+TEST_CASE("DFS and BFS")
 {
     BOTree<int> first;
     first.add_iter(4);
