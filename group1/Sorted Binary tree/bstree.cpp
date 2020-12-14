@@ -1,7 +1,28 @@
 #ifndef __BSTREE__CPP
 #define __BSTREE__CPP
 #include "bstree.h"
+#include <cassert>
 
+
+template <class T>
+BSTree<T>::~BSTree()
+{
+    deleteTree(root);
+}
+
+template <class T>
+void BSTree<T>::deleteTree(BSTree<T>::BTreeNode* _root)
+{
+    if(!_root)
+    {
+        return;
+    }
+
+    deleteTree(_root->left);
+    deleteTree(_root->right);
+
+    delete _root;
+}
 
 template <class T>
 bool BSTree<T>::empty() const {
@@ -224,6 +245,64 @@ typename BSTree<T>::BTreeNode* BSTree<T>::findMinInRightSubtree(BSTree<T>::BTree
         _root = _root->left;
     }
     return _root;
+}
+
+template <class T>
+void BSTree<T>::serialize(std::ostream& out) const
+{
+    serializeHelper(root, out);
+}
+
+template <class T>
+void BSTree<T>::serializeHelper(BSTree<T>::BTreeNode* _root, std::ostream& out) const
+{
+    if(!_root)
+    {
+        out << "()";
+        return;
+    }
+
+    out << "( " << _root->data << " ";
+
+    serializeHelper(_root->left, out);
+    serializeHelper(_root->right, out);
+
+    out << ")";
+}
+
+template <class T>
+void BSTree<T>::deserialize (std::istream &in)
+{
+    deleteTree(root);
+
+    root = deserializeHelper(in);
+}
+
+template <class T>
+typename BSTree<T>::BTreeNode* BSTree<T>::deserializeHelper (std::istream &in)
+{
+    assert(in.get() == '(');
+    
+    if (in.peek() == ')')
+    {
+        in.get();
+        return nullptr;
+    } 
+
+    in.get();
+   
+    T data;
+    in >> data;
+    
+    in.get();
+
+    BSTree<T>::BTreeNode* left = deserializeHelper(in);
+
+    BSTree<T>::BTreeNode* right = deserializeHelper(in);
+
+    assert (in.get() == ')');
+
+    return new BSTree<T>::BTreeNode {data, left, right};
 }
 
 

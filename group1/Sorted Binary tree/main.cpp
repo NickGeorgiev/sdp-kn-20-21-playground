@@ -11,14 +11,22 @@ int main()
     t.add(8);
     t.add(11);
     t.add(6);
-    t.add(7);
-    t.add(-3);
-    t.add(14);
+    //t.add(7);
+    //t.add(-3);
+    // t.add(14);
     t.add(10);
-    t.add(-2);
-    t.add(18);
-    t.add(5);
-    t.add(12);
+    // t.add(-2);
+    // t.add(18);
+    // t.add(5);
+    // t.add(12);
+
+    std::ifstream in("tree.txt");
+    t.deserialize(in);
+    in.close();
+
+    // std::ofstream out("tree.txt");
+    // t.serialize(out);
+    // out.close();
 
     // std::ofstream file("viztree.dot");
     // t.printDot(file);

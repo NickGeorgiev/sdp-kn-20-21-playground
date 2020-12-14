@@ -30,6 +30,9 @@ private:
     int balance(const BSTree<T>::BTreeNode*) const;
     void leftRotation(BSTree<T>::BTreeNode*&);
     void rightRotation(BSTree<T>::BTreeNode*&);
+    void serializeHelper(BSTree<T>::BTreeNode* _root, std::ostream& out) const;
+    BTreeNode* deserializeHelper (std::istream &in);
+
 
 public:
     class Iterator
@@ -55,6 +58,9 @@ public:
 
 public:
     BSTree(): root{nullptr} {}
+    ~BSTree();
+
+    void deleteTree(BSTree<T>::BTreeNode* _root);
     void add(const T&);
     void remove(const T&);
     void print() const;
@@ -62,6 +68,8 @@ public:
     bool member(const T&) const;
     bool empty() const;
     int height() const;
+    void serialize(std::ostream& out) const;
+    void deserialize (std::istream &in);
 
     Iterator begin();
     Iterator end();
