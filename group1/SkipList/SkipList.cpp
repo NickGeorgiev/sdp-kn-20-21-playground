@@ -1,4 +1,5 @@
 #include "SkipList.h"
+#include <vector>
 
 SkipList::SkipList(const SkipList &other)
 {

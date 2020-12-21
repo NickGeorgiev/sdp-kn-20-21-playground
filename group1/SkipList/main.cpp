@@ -8,8 +8,8 @@ int main()
     l.push(1);
     l.push(2);
     l.push(3);
+    l.push(0);
     l.push(4);
-    l.push(5);
 
     std::cout << l.member(2) << std::endl;
 

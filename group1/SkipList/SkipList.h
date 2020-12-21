@@ -33,6 +33,7 @@ public:
     void clear();
     int size();
     bool member(const int& element) const;
+    void sort();
 
     SkipList& operator= (const SkipList& other);
 };
