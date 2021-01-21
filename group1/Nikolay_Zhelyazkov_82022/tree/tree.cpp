@@ -1,4 +1,7 @@
 #include "tree.h"
+#include <stack>
+#include <queue>
+#include <vector>
 #include <algorithm>
 #include <exception>
 Tree::Tree() : root(nullptr)
@@ -61,7 +64,7 @@ void Tree::printHelper(Tree::Node *_root) const
 }
 void Tree::printDotHelper(std::ostream &out, Tree::Node *_root) const
 {
-    if (!_root)
+     if (!_root)
     {
         return;
     }
@@ -69,11 +72,11 @@ void Tree::printDotHelper(std::ostream &out, Tree::Node *_root) const
     out << (long)_root << "[label=\"" << _root->data << "\"];\n";
     if (_root->left)
     {
-        out << (long)_root << "->" << (long)_root->left << std::endl;
+        out << (long)_root << "->" << (long)_root->left <<"[color=blue];\n";
     }
     if (_root->right)
     {
-        out << (long)_root << "->" << (long)_root->right << std::endl;
+        out << (long)_root << "->" << (long)_root->right << "[color=red];\n";
     }
     printDotHelper(out, _root->right);
 }
@@ -91,6 +94,7 @@ void Tree::printDot(std::ostream &out) const
 
 void Tree::eraseHelper(const int &data, Tree::Node *&_root)
 {
+    
     if (!_root)
     {
         return;
@@ -176,7 +180,7 @@ int Tree::heightHelper(Tree::Node *_root) const
 {
     if (!_root)
     {
-        return 0;
+        return -1;
     }
     return 1 + std::max(heightHelper(_root->left), heightHelper(_root->right));
 }
@@ -221,7 +225,7 @@ int Tree::maxLeave() const
 {
     if (empty())
     {
-        throw "Empty tree";
+        throw std::out_of_range("Empty Balanced Tree");
         return INT_MIN;
     }
     return maxHelperLeave(root);
@@ -266,7 +270,7 @@ Tree::Node *Tree::locate(const char *s) const
 {
     if (empty())
     {
-        throw std::out_of_range("Empty tree at the locate method -> 274 line");
+        throw std::out_of_range("Empty tree at the locate method -> 273 line");
     }
 
     if (s[0] == 0)
@@ -278,7 +282,7 @@ Tree::Node *Tree::locate(const char *s) const
     {
         if (s[0] != 'L' && s[0] != 'R')
         {
-            throw "Error symbol at the locate method -> 286 line";
+            throw "Error symbol at the locate method -> 285 line";
         }
         if (s[0] == 'L')
         {
@@ -292,7 +296,7 @@ Tree::Node *Tree::locate(const char *s) const
     }
     if (!current)
     {
-        throw std::out_of_range("Error road in locate on 300 line");
+        throw std::out_of_range("Error road in locate on 299 line");
     }
     return current;
 }
@@ -322,7 +326,7 @@ void Tree::clearHelper(Tree::Node *&current)
     clearHelper(current->right);
     if (current && !current->left && !current->right)
     {
-       // std::cout << "deleted " << current->data << std::endl;
+        // std::cout << "deleted " << current->data << std::endl;
         Tree::Node *save = current;
         current = nullptr;
         delete save;
@@ -335,4 +339,44 @@ void Tree::clear()
 Tree::~Tree()
 {
     clear();
+}
+
+void Tree::DFS(Tree::Node *t) const
+{
+    std::stack<Tree::Node *> stack;
+    stack.push(t);
+
+    while (!stack.empty())
+    {
+        Tree::Node *curr = stack.top();
+        stack.pop();
+
+        std::cout << curr->data << " -> ";
+
+        if (!curr->left && !curr->right)
+        {
+            continue;
+        }
+
+        stack.push(curr->left);
+        stack.push(curr->right);
+    }
+}
+void Tree::BFS(Tree::Node *root) const
+{
+    std::queue<Tree::Node *> q;
+    q.push(root);
+    while (!q.empty())
+    {
+        Tree::Node *cur = q.front();
+        q.pop();
+        std::cout << cur->data << " -> ";
+        if (!cur->left && !cur->right)
+        {
+            continue;
+        }
+
+        q.push(cur->left);
+        q.push(cur->right);
+    }
 }
